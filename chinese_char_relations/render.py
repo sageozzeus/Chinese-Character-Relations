@@ -4,17 +4,21 @@
 from __future__ import annotations
 
 from html import escape
+from typing import Any, Optional
 
+from .defaults import merge_ui
 from .indexer import RelatedEntry
 
-# Keep in sync with preview/preview.html
+# Structural CSS — colors/sizes come from CSS variables set per render.
+# Keep structural rules in sync with preview/preview.html where practical.
 PANEL_CSS = """
 .char-relations {
   margin: 1.25em auto 0;
-  max-width: 36em;
+  max-width: var(--cr-max-width, 100%);
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.65em;
+  gap: var(--cr-gap, 0.65em);
   text-align: left;
   font-size: 0.92em;
   line-height: 1.35;
@@ -23,28 +27,21 @@ PANEL_CSS = """
 }
 .char-relations-group {
   padding: 0.75em 0.9em 0.85em;
-  border: 1px solid rgba(120, 120, 120, 0.28);
-  border-radius: 12px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.52) 100%
-    );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 3px 8px rgba(40, 35, 30, 0.07);
+  border: 1px solid var(--cr-border, #b0b0b0);
+  border-radius: var(--cr-radius, 12px);
+  background: var(--cr-bg, #ffffff);
+  box-shadow: var(--cr-shadow, 0 3px 8px rgba(40, 35, 30, 0.07));
   box-sizing: border-box;
 }
 .char-relations-char {
-  font-size: 1.05em;
+  font-size: var(--cr-char-size, 1.05em);
   font-weight: 400;
   margin-bottom: 0.4em;
   opacity: 0.9;
 }
 .char-relations-scroll {
   position: relative;
-  margin: 0 -0.15em;
+  margin: 0;
 }
 .char-relations-items {
   display: flex;
@@ -55,7 +52,7 @@ PANEL_CSS = """
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: 0.1em 1.15em;
+  padding: 0.1em 0;
   scroll-behavior: smooth;
 }
 .char-relations-items::-webkit-scrollbar {
@@ -78,14 +75,14 @@ PANEL_CSS = """
   text-underline-offset: 0.12em;
 }
 .char-relations-pinyin {
-  font-size: 0.62em;
+  font-size: var(--cr-pinyin-size, 0.62em);
   font-weight: 400;
   opacity: 0.65;
   line-height: 1.15;
 }
 .char-relations-word {
   font-weight: 400;
-  font-size: 0.82em;
+  font-size: var(--cr-word-size, 0.82em);
   line-height: 1.2;
 }
 .char-relations-arrow {
@@ -97,9 +94,9 @@ PANEL_CSS = """
   height: 1.35em;
   padding: 0;
   margin: 0;
-  border: 1px solid rgba(120, 120, 120, 0.28);
+  border: 1px solid var(--cr-border, #b0b0b0);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--cr-bg, #ffffff);
   color: inherit;
   font-size: 0.95em;
   font-weight: 400;
@@ -108,7 +105,7 @@ PANEL_CSS = """
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
-  box-shadow: 0 2px 6px rgba(40, 35, 30, 0.08);
+  box-shadow: var(--cr-shadow, 0 2px 6px rgba(40, 35, 30, 0.08));
 }
 .char-relations-arrow-left { left: 0; }
 .char-relations-arrow-right { right: 0; }
@@ -122,7 +119,7 @@ PANEL_CSS = """
 .char-relations-item.is-mature,
 .char-relations-item.is-mature .char-relations-pinyin,
 .char-relations-item.is-mature .char-relations-word {
-  color: #2e7d32;
+  color: var(--cr-mature, #2e7d32);
 }
 .char-relations-item.is-mature .char-relations-pinyin {
   opacity: 0.85;
@@ -130,7 +127,7 @@ PANEL_CSS = """
 .char-relations-item.is-suspended,
 .char-relations-item.is-suspended .char-relations-pinyin,
 .char-relations-item.is-suspended .char-relations-word {
-  color: #c62828;
+  color: var(--cr-suspended, #c62828);
 }
 .char-relations-item.is-suspended .char-relations-pinyin {
   opacity: 0.85;
@@ -138,16 +135,9 @@ PANEL_CSS = """
 
 .nightMode .char-relations-group,
 .night-mode .char-relations-group {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(58, 60, 66, 0.95) 0%,
-      rgba(40, 42, 48, 0.95) 100%
-    );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.07) inset,
-    0 4px 10px rgba(0, 0, 0, 0.28);
+  border-color: var(--cr-border-dark, #5a5a5a);
+  background: var(--cr-bg-dark, #303238);
+  box-shadow: var(--cr-shadow-dark, 0 4px 10px rgba(0, 0, 0, 0.28));
 }
 .nightMode .char-relations-char,
 .night-mode .char-relations-char {
@@ -159,10 +149,10 @@ PANEL_CSS = """
 }
 .nightMode .char-relations-arrow,
 .night-mode .char-relations-arrow {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(48, 50, 56, 0.95);
+  border-color: var(--cr-border-dark, #5a5a5a);
+  background: var(--cr-bg-dark, #303238);
   color: #e8e8e8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--cr-shadow-dark, 0 2px 8px rgba(0, 0, 0, 0.3));
 }
 .nightMode .char-relations-item.is-mature,
 .nightMode .char-relations-item.is-mature .char-relations-pinyin,
@@ -170,7 +160,7 @@ PANEL_CSS = """
 .night-mode .char-relations-item.is-mature,
 .night-mode .char-relations-item.is-mature .char-relations-pinyin,
 .night-mode .char-relations-item.is-mature .char-relations-word {
-  color: #81c784;
+  color: var(--cr-mature-dark, #81c784);
 }
 .nightMode .char-relations-item.is-suspended,
 .nightMode .char-relations-item.is-suspended .char-relations-pinyin,
@@ -178,7 +168,7 @@ PANEL_CSS = """
 .night-mode .char-relations-item.is-suspended,
 .night-mode .char-relations-item.is-suspended .char-relations-pinyin,
 .night-mode .char-relations-item.is-suspended .char-relations-word {
-  color: #ef9a9a;
+  color: var(--cr-suspended-dark, #ef9a9a);
 }
 """
 
@@ -245,20 +235,57 @@ def _item_class(entry: RelatedEntry) -> str:
     return "char-relations-item"
 
 
-def render_panel(groups: list[tuple[str, list[RelatedEntry]]]) -> str:
+def _css_var_block(ui: dict[str, Any]) -> str:
+    """Inline style attribute setting CSS variables from ui config."""
+    shadow_on = bool(ui.get("show_shadow", True))
+    shadow = "0 3px 8px rgba(40, 35, 30, 0.07)" if shadow_on else "none"
+    shadow_dark = "0 4px 10px rgba(0, 0, 0, 0.28)" if shadow_on else "none"
+    pairs = {
+        "--cr-max-width": str(ui.get("max_width") or "100%"),
+        "--cr-gap": f"{float(ui.get('gap_em', 0.65))}em",
+        "--cr-radius": f"{int(ui.get('border_radius_px', 12))}px",
+        "--cr-char-size": f"{float(ui.get('char_size_em', 1.05))}em",
+        "--cr-word-size": f"{float(ui.get('word_size_em', 0.82))}em",
+        "--cr-pinyin-size": f"{float(ui.get('pinyin_size_em', 0.62))}em",
+        "--cr-bg": str(ui.get("bg_light") or "#ffffff"),
+        "--cr-bg-dark": str(ui.get("bg_dark") or "#303238"),
+        "--cr-border": str(ui.get("border_light") or "#b0b0b0"),
+        "--cr-border-dark": str(ui.get("border_dark") or "#5a5a5a"),
+        "--cr-mature": str(ui.get("mature_light") or "#2e7d32"),
+        "--cr-mature-dark": str(ui.get("mature_dark") or "#81c784"),
+        "--cr-suspended": str(ui.get("suspended_light") or "#c62828"),
+        "--cr-suspended-dark": str(ui.get("suspended_dark") or "#ef9a9a"),
+        "--cr-shadow": shadow,
+        "--cr-shadow-dark": shadow_dark,
+    }
+    return "; ".join(f"{k}: {escape(v, quote=True)}" for k, v in pairs.items())
+
+
+def _safe_custom_css(css: str) -> str:
+    """Prevent breaking out of the style tag."""
+    return (css or "").replace("</", "<\\/")
+
+
+def render_panel(
+    groups: list[tuple[str, list[RelatedEntry]]],
+    ui: Optional[dict[str, Any]] = None,
+) -> str:
     """
     Build the Related panel HTML, or "" if there is nothing to show.
 
-    Each character group is its own bordered card with a single-row
-    horizontal scroller (arrows on hover when overflow exists).
-    Words are clickable and open the note in Browser via pycmd.
+    *ui* comes from config["ui"] (Appearance tab). Defaults applied if omitted.
     """
     if not groups:
         return ""
 
+    ui = merge_ui(ui)
+    custom = _safe_custom_css(str(ui.get("custom_css") or "")).strip()
+    custom_block = f"<style id=\"char-relations-custom\">{custom}</style>" if custom else ""
+
     parts: list[str] = [
-        f"<style>{PANEL_CSS}</style>",
-        '<div class="char-relations" id="char-relations-panel">',
+        f"<style id=\"char-relations-style\">{PANEL_CSS}</style>",
+        custom_block,
+        f'<div class="char-relations" id="char-relations-panel" style="{_css_var_block(ui)}">',
     ]
 
     for ch, entries in groups:

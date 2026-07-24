@@ -8,5 +8,23 @@
   "max_per_char": 8,
   "include_suspended": true,
   "candidate_min_length": 2,
-  "show_on_answer_only": true
+  "show_on_answer_only": true,
+  "ui": {
+    "max_width": "100%",
+    "border_radius_px": 12,
+    "gap_em": 0.65,
+    "char_size_em": 1.05,
+    "word_size_em": 0.82,
+    "pinyin_size_em": 0.62,
+    "bg_light": "#ffffff",
+    "bg_dark": "#303238",
+    "border_light": "#b0b0b0",
+    "border_dark": "#5a5a5a",
+    "mature_light": "#2e7d32",
+    "mature_dark": "#81c784",
+    "suspended_light": "#c62828",
+    "suspended_dark": "#ef9a9a",
+    "show_shadow": true,
+    "custom_css": ""
+  }
 }

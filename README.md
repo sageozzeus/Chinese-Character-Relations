@@ -47,7 +47,12 @@ Edit the `.char-relations*` CSS there, then copy the same rules into `chinese_ch
 
 ## Config
 
-Use the GUI (**Tools → Character Relations → Settings…**). Defaults:
+Use the GUI (**Tools → Character Relations → Settings…**):
+
+- **General** — decks, fields, display caps
+- **Appearance** — max width, type sizes, colors (light/dark), shadow, optional custom CSS
+
+Appearance changes apply on the next answer flip (no rebuild). Defaults:
 
 | Key | Default | Notes |
 | --- | --- | --- |

@@ -9,6 +9,7 @@ from anki.cards import Card
 from aqt import mw
 
 from .cjk import strip_html
+from .defaults import merge_config
 from .indexer import FALLBACK_WORD_FIELDS, get_index, resolve_field
 from .render import PANEL_JS, render_panel
 
@@ -18,7 +19,7 @@ def _package_name() -> str:
 
 
 def _config() -> dict[str, Any]:
-    return mw.addonManager.getConfig(_package_name()) or {}
+    return merge_config(mw.addonManager.getConfig(_package_name()))
 
 
 def _field(config: dict[str, Any], key: str, default: str) -> str:
@@ -59,7 +60,7 @@ def panel_html_for_card(card: Card) -> str:
         return ""
 
     groups = idx.related_for(word, config, note_id=note_id)
-    return render_panel(groups)
+    return render_panel(groups, ui=config.get("ui"))
 
 
 def on_card_will_show(html: str, card: Card, context: str) -> str:

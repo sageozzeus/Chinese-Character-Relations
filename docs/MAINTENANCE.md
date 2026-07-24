@@ -67,7 +67,8 @@ Anki loads Python at startup. There is **no hot reload**. After Python changes: 
 | Panel markup / CSS | `render.py` → `PANEL_CSS`, `render_panel` + sync `preview/preview.html` |
 | When panel appears / clears | `reviewer.py` → `on_show_answer`, `on_show_question` |
 | Click related word → Browser | `browser.py` + `pycmd` in `render.py` PANEL_JS |
-| Settings GUI (decks, fields, toggles) | `config_dialog.py` |
+| Settings GUI (decks, fields, Appearance) | `config_dialog.py` + `defaults.py` |
+| Panel CSS variables from Appearance tab | `render.py` → `_css_var_block` / `ui` config |
 | Menu / rebuild / Config button wiring | `__init__.py` |
 | Defaults users get on first install | `config.json` + `config.md` |
 

@@ -11,6 +11,7 @@ from aqt import mw
 from aqt.utils import showInfo, tooltip
 
 from .cjk import cjk_length, extract_cjk_chars, strip_html
+from .defaults import merge_config
 
 # Tried when the configured word field is missing from a note type
 FALLBACK_WORD_FIELDS = (
@@ -404,7 +405,7 @@ def rebuild_index(*, show_progress: bool = True, notify: bool = True) -> None:
     """Rebuild the global index from current config."""
     if mw.col is None:
         return
-    config = mw.addonManager.getConfig(_addon_package()) or {}
+    config = merge_config(mw.addonManager.getConfig(_addon_package()))
     idx = get_index()
     stats = idx.build(config, show_progress=show_progress)
     if notify:
