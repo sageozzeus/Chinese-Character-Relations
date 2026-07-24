@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Character Relations — UI Preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "PingFang SC", "Noto Sans SC", "Hiragino Sans GB", sans-serif;
+      background: #e8e4dc;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+      gap: 1.5rem;
+    }
+    .hint {
+      font-size: 0.8rem;
+      opacity: 0.55;
+      max-width: 40em;
+      text-align: center;
+    }
+    .previews {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      width: 100%;
+    }
+    .preview-col {
+      width: min(100%, 22rem);
+    }
+    .preview-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 0.5rem;
+    }
+    #qa-light {
+      background: rgba(255,255,255,0.72);
+      padding: 2rem 1.5rem 1.5rem;
+      border-radius: 2px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+      color: #1a1a1a;
+    }
+    #qa-dark {
+      background: #2c2c2c;
+      padding: 2rem 1.5rem 1.5rem;
+      border-radius: 2px;
+      color: #e8e8e8;
+    }
+    .card-answer {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .card-answer .hanzi {
+      font-size: 2.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+    .card-answer .reading {
+      margin-top: 0.35rem;
+      opacity: 0.7;
+      font-size: 1.05rem;
+    }
+    .card-answer .gloss {
+      margin-top: 0.5rem;
+      opacity: 0.85;
+    }
+
+    /*
+      === KEEP IN SYNC with chinese_char_relations/render.py PANEL_CSS ===
+    */
+    .char-relations {
+      margin: 1.25em auto 0;
+      max-width: 36em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65em;
+      text-align: left;
+      font-size: 0.92em;
+      line-height: 1.35;
+      color: inherit;
+      box-sizing: border-box;
+    }
+    .char-relations-group {
+      padding: 0.75em 0.9em 0.85em;
+      border: 1px solid rgba(120, 120, 120, 0.28);
+      border-radius: 12px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.78) 0%,
+          rgba(255, 255, 255, 0.52) 100%
+        );
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 3px 8px rgba(40, 35, 30, 0.07);
+      box-sizing: border-box;
+    }
+    .char-relations-char {
+      font-size: 1.05em;
+      font-weight: 400;
+      margin-bottom: 0.4em;
+      opacity: 0.9;
+    }
+    .char-relations-scroll {
+      position: relative;
+      margin: 0 -0.15em;
+    }
+    .char-relations-items {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.55em 0.95em;
+      align-items: flex-end;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0.1em 1.15em;
+      scroll-behavior: smooth;
+    }
+    .char-relations-items::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    .char-relations-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.08em;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      color: inherit;
+      cursor: pointer;
+    }
+    .char-relations-item:hover .char-relations-word {
+      text-decoration: underline;
+      text-underline-offset: 0.12em;
+    }
+    .char-relations-pinyin {
+      font-size: 0.62em;
+      font-weight: 400;
+      opacity: 0.65;
+      line-height: 1.15;
+    }
+    .char-relations-word {
+      font-weight: 400;
+      font-size: 0.82em;
+      line-height: 1.2;
+    }
+    .char-relations-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 1.35em;
+      height: 1.35em;
+      padding: 0;
+      margin: 0;
+      border: 1px solid rgba(120, 120, 120, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      color: inherit;
+      font-size: 0.95em;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 2px 6px rgba(40, 35, 30, 0.08);
+    }
+    .char-relations-arrow-left { left: 0; }
+    .char-relations-arrow-right { right: 0; }
+    .char-relations-group:hover .char-relations-scroll.is-scrollable .char-relations-arrow {
+      opacity: 0.85;
+      pointer-events: auto;
+    }
+    .char-relations-group:hover .char-relations-scroll.is-scrollable .char-relations-arrow:hover {
+      opacity: 1;
+    }
+    .char-relations-item.is-mature,
+    .char-relations-item.is-mature .char-relations-pinyin,
+    .char-relations-item.is-mature .char-relations-word {
+      color: #2e7d32;
+    }
+    .char-relations-item.is-mature .char-relations-pinyin {
+      opacity: 0.85;
+    }
+    .char-relations-item.is-suspended,
+    .char-relations-item.is-suspended .char-relations-pinyin,
+    .char-relations-item.is-suspended .char-relations-word {
+      color: #c62828;
+    }
+    .char-relations-item.is-suspended .char-relations-pinyin {
+      opacity: 0.85;
+    }
+
+    .nightMode .char-relations-group,
+    .night-mode .char-relations-group {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(58, 60, 66, 0.95) 0%,
+          rgba(40, 42, 48, 0.95) 100%
+        );
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.07) inset,
+        0 4px 10px rgba(0, 0, 0, 0.28);
+    }
+    .nightMode .char-relations-char,
+    .night-mode .char-relations-char {
+      opacity: 0.88;
+    }
+    .nightMode .char-relations-pinyin,
+    .night-mode .char-relations-pinyin {
+      opacity: 0.65;
+    }
+    .nightMode .char-relations-arrow,
+    .night-mode .char-relations-arrow {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(48, 50, 56, 0.95);
+      color: #e8e8e8;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .nightMode .char-relations-item.is-mature,
+    .nightMode .char-relations-item.is-mature .char-relations-pinyin,
+    .nightMode .char-relations-item.is-mature .char-relations-word,
+    .night-mode .char-relations-item.is-mature,
+    .night-mode .char-relations-item.is-mature .char-relations-pinyin,
+    .night-mode .char-relations-item.is-mature .char-relations-word {
+      color: #81c784;
+    }
+    .nightMode .char-relations-item.is-suspended,
+    .nightMode .char-relations-item.is-suspended .char-relations-pinyin,
+    .nightMode .char-relations-item.is-suspended .char-relations-word,
+    .night-mode .char-relations-item.is-suspended,
+    .night-mode .char-relations-item.is-suspended .char-relations-pinyin,
+    .night-mode .char-relations-item.is-suspended .char-relations-word {
+      color: #ef9a9a;
+    }
+  </style>
+</head>
+<body>
+  <p class="hint">
+    Narrow cards force overflow. Hover a character card — edge arrows appear when scrollable.
+    No scrollbar. Trackpad / shift-scroll also works.
+  </p>
+
+  <div class="previews">
+    <div class="preview-col">
+      <div class="preview-label">Light</div>
+      <div id="qa-light">
+        <div class="card-answer">
+          <div class="hanzi">好像</div>
+          <div class="reading">hǎoxiàng</div>
+          <div class="gloss">seem like; as if</div>
+        </div>
+        <div class="char-relations">
+          <div class="char-relations-group">
+            <div class="char-relations-char">好</div>
+            <div class="char-relations-scroll">
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <div class="char-relations-items">
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎode</span><span class="char-relations-word">好的</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎotīng</span><span class="char-relations-word">好听</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎokàn</span><span class="char-relations-word">好看</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">zuìhǎo</span><span class="char-relations-word">最好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎoxiào</span><span class="char-relations-word">好笑</span></span>
+              </div>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+            </div>
+          </div>
+          <div class="char-relations-group">
+            <div class="char-relations-char">像</div>
+            <div class="char-relations-scroll">
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <div class="char-relations-items">
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xiǎngxiàng</span><span class="char-relations-word">想像</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xíngxiàng</span><span class="char-relations-word">形象</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">duìxiàng</span><span class="char-relations-word">对象</span></span>
+              </div>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-col">
+      <div class="preview-label">Dark (nightMode)</div>
+      <div id="qa-dark" class="nightMode">
+        <div class="card-answer">
+          <div class="hanzi">好像</div>
+          <div class="reading">hǎoxiàng</div>
+          <div class="gloss">seem like; as if</div>
+        </div>
+        <div class="char-relations">
+          <div class="char-relations-group">
+            <div class="char-relations-char">好</div>
+            <div class="char-relations-scroll">
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <div class="char-relations-items">
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎode</span><span class="char-relations-word">好的</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎotīng</span><span class="char-relations-word">好听</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎokàn</span><span class="char-relations-word">好看</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">zuìhǎo</span><span class="char-relations-word">最好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎoxiào</span><span class="char-relations-word">好笑</span></span>
+              </div>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+            </div>
+          </div>
+          <div class="char-relations-group">
+            <div class="char-relations-char">像</div>
+            <div class="char-relations-scroll">
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <div class="char-relations-items">
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xiǎngxiàng</span><span class="char-relations-word">想像</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
+                <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xíngxiàng</span><span class="char-relations-word">形象</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">duìxiàng</span><span class="char-relations-word">对象</span></span>
+              </div>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function refresh(wrap) {
+        var track = wrap.querySelector(".char-relations-items");
+        if (!track) return;
+        wrap.classList.toggle("is-scrollable", track.scrollWidth > track.clientWidth + 2);
+      }
+      function bind(wrap) {
+        if (wrap.getAttribute("data-cr-bound") === "1") {
+          refresh(wrap);
+          return;
+        }
+        wrap.setAttribute("data-cr-bound", "1");
+        var track = wrap.querySelector(".char-relations-items");
+        var left = wrap.querySelector(".char-relations-arrow-left");
+        var right = wrap.querySelector(".char-relations-arrow-right");
+        if (!track || !left || !right) return;
+        left.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          track.scrollBy({ left: -160, behavior: "smooth" });
+        });
+        right.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          track.scrollBy({ left: 160, behavior: "smooth" });
+        });
+        track.addEventListener("scroll", function () { refresh(wrap); });
+        if (window.ResizeObserver) {
+          new ResizeObserver(function () { refresh(wrap); }).observe(track);
+        }
+        refresh(wrap);
+      }
+      document.querySelectorAll(".char-relations-scroll").forEach(bind);
+    })();
+  </script>
+</body>
+</html>

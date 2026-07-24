@@ -1,0 +1,12 @@
+{
+  "decks": [],
+  "fields": {
+    "word": "Word",
+    "pinyin": "Pinyin",
+    "meaning": "Meaning"
+  },
+  "max_per_char": 8,
+  "include_suspended": true,
+  "candidate_min_length": 2,
+  "show_on_answer_only": true
+}

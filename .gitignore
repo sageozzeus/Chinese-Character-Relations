@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.ankiaddon
+.DS_Store
+meta.json
+*.egg-info/
+.venv/
