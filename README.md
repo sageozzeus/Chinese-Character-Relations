@@ -1,101 +1,61 @@
 # Chinese Character Relations
 
-Anki 2.1+ desktop add-on that shows **related words from your own deck** sharing Chinese characters with the card you’re reviewing — on the answer side.
+Anki desktop add-on that shows **related words from your own deck** that share Chinese characters with the card you’re reviewing.
 
 Example: reviewing **好** → under the answer you see 好像, 好的, 好听…  
-Reviewing **好像** → groups by 好 and 像 (current word excluded).
+Reviewing **好像** → groups by 好 and 像 (the current word is excluded).
 
-Works offline. Uses only `mw.col` (no AnkiConnect, no external dictionary for MVP).
+Works offline. Uses only your collection — no external dictionary, no AnkiConnect.
 
 ## Requirements
 
 - Anki Desktop **23.10+** (Qt6 preferred)
-- macOS first (Linux/Windows paths differ only for the add-ons folder)
+- macOS, Windows, or Linux
 
-## Install (end users)
+## Install
 
-1. Copy the `chinese_char_relations` folder into:
+**From AnkiWeb** (when the listing is live): search for *Chinese Character Relations* in **Tools → Add-ons → Get Add-ons…**, or open the listing from the About tab after install.
 
-   `~/Library/Application Support/Anki2/addons21/`
+**From this repo:**
 
-2. Restart Anki.
-3. **Tools → Character Relations…** (or **Tools → Add-ons → Config**) — opens settings. No JSON editing.
-4. On the **General** tab, click **Rebuild Index** (also offered after saving deck/field changes).
+1. Download or clone the repository.
+2. Copy the `chinese_char_relations` folder into your Anki add-ons folder:
 
-## Development setup (symlink)
+   - **macOS:** `~/Library/Application Support/Anki2/addons21/`
+   - **Windows:** `%APPDATA%\Anki2\addons21\`
+   - **Linux:** `~/.local/share/Anki2/addons21/`
 
-Do **not** copy the folder on every change. Symlink once:
+3. Restart Anki.
+4. Open **Tools → Character Relations…**
+5. On the **General** tab, set your Word / Hanzi (and optional Pinyin) fields, then click **Rebuild Index**.
 
-```bash
-./scripts/link-anki-addon.sh
-# or:
-ln -s "/Users/urfan/Desktop/apps-websites/hanzi-relatives/chinese_char_relations" \
-  "$HOME/Library/Application Support/Anki2/addons21/chinese_char_relations"
-```
+## Settings
 
-Then: edit in this repo → quit & reopen Anki (**Cmd+Q**) → flip a card.
+**Tools → Character Relations…** (or **Tools → Add-ons → Config**):
 
-If a real folder already exists at that path, rename it before creating the symlink.
+| Tab | What it’s for |
+| --- | --- |
+| **General** | Decks, field names, display limits, **Rebuild Index** |
+| **Appearance** | Panel width, type sizes, colors, optional custom CSS |
+| **About** | Version, changelog, bug reports, links |
 
-Maintainer deep-dive: [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md).
+After changing decks or fields, rebuild when prompted (or use **Rebuild Index**). Appearance changes apply on the next answer flip — no rebuild needed.
 
-## UI preview (no Anki)
+Defaults assume a `Word` and `Pinyin` field. If your deck uses `Hanzi` / `Expression` / etc., set those names on the General tab.
 
-- **Card panel:** [`preview/preview.html`](preview/preview.html) — answer-side Relatives UI (**Cmd+O** in Finder, or open via local server).
-- **Settings dialog:** [`preview/config-preview.html`](preview/config-preview.html) — mock of **Tools → Character Relations…**
+## Tips
 
-Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `chinese_char_relations/render.py` (`PANEL_CSS`). Tweak settings layout/copy in `config-preview.html`, then mirror in `config_dialog.py`.
+- Click a related word to open that note in the Browser.
+- If nothing related appears, check field names and rebuild; rare characters with no other deck words simply show no panel.
+- Suspended notes can be included or hidden on the General tab.
 
-## Config
+## Support
 
-Use the GUI (**Tools → Character Relations…**, or Add-ons → **Config**):
+- **Bugs:** [GitHub Issues](https://github.com/sageozzeus/Chinese-Character-Relations/issues)
+- **Updates / short questions:** [X @sageozzeus](https://x.com/sageozzeus)
+- **Source:** [github.com/sageozzeus/Chinese-Character-Relations](https://github.com/sageozzeus/Chinese-Character-Relations)
 
-- **General** — decks, fields, display caps, **Rebuild Index**
-- **Appearance** — max width, type sizes, colors (light/dark), optional custom CSS
-- **About** — version, license, changelog, GitHub / X / bug report links (AnkiWeb after publish)
-
-Appearance changes apply on the next answer flip (no rebuild). Defaults:
-
-| Key | Default | Notes |
-| --- | --- | --- |
-| Decks | All decks | Dropdown multi-select; empty = all |
-| Word / Hanzi | `Word` | Headword field |
-| Pinyin | `Pinyin` | Optional |
-| Max per character | `8` | Cap per character group |
-| Include suspended | yes | Filter at lookup time |
-| Min word length | `2` | Min CJK length for relatives |
-| Show only on back | yes | Off = front and back |
-
-## Manual test checklist
-
-- [ ] Single-char card shows multi-char relatives containing that char
-- [ ] Multi-char card groups by each character
-- [ ] Current headword is excluded from the list
-- [ ] `include_suspended: false` hides fully inactive notes
-- [ ] Wrong / missing field names → no crash (tooltip at most once per session)
-- [ ] After adding a note, **Rebuild Index** makes it appear in Related
-- [ ] Front of card has no Related panel when **Show only on back** is on; shows on both sides when off
-- [ ] Empty relations → no empty box under the card
-
-## Package for AnkiWeb
-
-```bash
-cd chinese_char_relations
-rm -rf __pycache__ **/__pycache__
-zip -r ../chinese_char_relations.ankiaddon *
-```
-
-Upload at https://ankiweb.net/shared/addons/ (zip must contain files at top level, not a wrapping folder).
-
-## Docs
-
-- [Maintenance & architecture](docs/MAINTENANCE.md) — how to change index, hooks, UI, publish
-- [Manual test details](docs/TESTING.md)
-
-## Links
-
-- GitHub: https://github.com/sageozzeus/Chinese-Character-Relations
-- X: https://x.com/sageozzeus
+Maintainer docs (dev setup, architecture, packaging): [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md) · QA checklist: [`docs/TESTING.md`](docs/TESTING.md)
 
 ## License
 

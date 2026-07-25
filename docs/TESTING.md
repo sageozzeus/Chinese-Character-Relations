@@ -13,7 +13,7 @@ Run these after any change to indexing, rendering, or hooks. Use a small Chinese
 ### 0. Settings GUI
 
 - Open **Tools → Character Relations…**
-- **Expect:** dialog with General / Appearance tabs (not a JSON editor)
+- **Expect:** dialog with General / Appearance / About tabs (not a JSON editor)
 - Change a field, Save, rebuild when asked (or use **Rebuild Index** on General)
 - Open **Tools → Add-ons → Chinese Character Relations → Config**
 - **Expect:** same GUI dialog (not raw JSON)

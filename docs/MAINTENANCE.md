@@ -49,16 +49,36 @@ hanzi-relatives/
 │   ├── preview.html            # Browser UI sandbox — card panel (NOT shipped in .ankiaddon)
 │   └── config-preview.html     # Settings dialog mock — sync with config_dialog.py
 ├── docs/
-│   ├── MAINTENANCE.md          # This file
-│   └── TESTING.md              # Manual QA checklist
+│   ├── MAINTENANCE.md          # This file (dev setup, architecture, publish)
+│   ├── TESTING.md              # Manual QA checklist
+│   └── BUG_SOLUTIONS.md        # Known fixes / Qt gotchas
 ├── LICENSE                     # MIT
-└── README.md                   # Install / symlink / AnkiWeb packaging
+└── README.md                   # End-user install & usage
 ```
 
-**Dev install:** symlink `chinese_char_relations` →  
-`~/Library/Application Support/Anki2/addons21/chinese_char_relations`
+## Development setup (symlink)
 
-Anki loads Python at startup. There is **no hot reload**. After Python changes: quit Anki fully (**Cmd+Q**) and reopen.
+Do **not** copy the add-on folder into `addons21` on every change. Symlink once:
+
+```bash
+./scripts/link-anki-addon.sh
+# or:
+ln -s "/ABS/PATH/TO/repo/chinese_char_relations" \
+  "$HOME/Library/Application Support/Anki2/addons21/chinese_char_relations"
+```
+
+Then: edit in this repo → quit Anki fully (**Cmd+Q**) → reopen → flip a card.
+
+If a real folder already exists at that path, rename or remove it before creating the symlink.
+
+Anki loads Python at startup. There is **no hot reload**.
+
+## UI preview (no Anki)
+
+- **Card panel:** [`preview/preview.html`](../preview/preview.html) — answer-side Relatives UI (**Cmd+O** in Finder, or open via a local server)
+- **Settings dialog:** [`preview/config-preview.html`](../preview/config-preview.html) — mock of **Tools → Character Relations…** (tabs: General / Appearance / About)
+
+Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `chinese_char_relations/render.py` (`PANEL_CSS`). Tweak settings layout/copy in `config-preview.html`, then mirror in `config_dialog.py`.
 
 ## Module map (change guide)
 
@@ -210,6 +230,9 @@ Extension points already shaped for this:
    `https://ankiweb.net/shared/info/<id>` so the About tab shows **AnkiWeb page** and **Rate / review**. Mirror that in `preview/config-preview.html`.
 
 Update the AnkiWeb description when behavior changes. Bump the human version in **`about_meta.py`** (`ADDON_VERSION` + prepend a `CHANGELOG` entry) whenever you ship, and match the AnkiWeb listing version string.
+
+Packaging reminder: the zip must contain files at the **top level** of the archive (not a wrapping folder). `preview/`, `docs/`, and tests stay outside `chinese_char_relations/` so they are not included.
+
 ## Automated tests (no Anki)
 
 CJK helpers are covered by unittest (does not need Anki/`aqt`):
@@ -244,6 +267,6 @@ python3 -m unittest tests.test_cjk -v
 
 1. Change the smallest module that owns the behavior (table above)
 2. If CSS: update `render.py` **and** `preview/preview.html`
-3. If config keys: update `config.json`, `config.md`, README table, and this doc
+3. If config keys: update `config.json`, `config.md`, and this doc (user-facing defaults stay in `config.md` / the settings GUI)
 4. Run through [`TESTING.md`](TESTING.md) for the affected cases
 5. Rebuild index in Anki after field/deck changes
