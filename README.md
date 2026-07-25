@@ -9,15 +9,28 @@ Works offline. Uses only your collection — no external dictionary, no AnkiConn
 
 ## Screenshots
 
-![Related words on the answer side (dark)](docs/media/preview-dark.png)
-
-![Related words on the answer side (light)](docs/media/preview-light.png)
-
-![Multi-character card with Relatives (dark)](docs/media/preview-2-dark.png)
-
-![General settings](docs/media/general-tab.png)
-
-![Appearance settings](docs/media/appearance-tab.png)
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <p><strong>Dark mode</strong></p>
+      <img src="docs/media/preview-dark.png" alt="Related words on the answer side (dark mode)" />
+    </td>
+    <td align="center" width="50%">
+      <p><strong>Light mode</strong></p>
+      <img src="docs/media/preview-light.png" alt="Related words on the answer side (light mode)" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <p><strong>Settings — General</strong></p>
+      <img src="docs/media/general-tab.png" alt="General settings tab" />
+    </td>
+    <td align="center" width="50%">
+      <p><strong>Settings — Appearance</strong></p>
+      <img src="docs/media/appearance-tab.png" alt="Appearance settings tab" />
+    </td>
+  </tr>
+</table>
 
 ## Requirements
 

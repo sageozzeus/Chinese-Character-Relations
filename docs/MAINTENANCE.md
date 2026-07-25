@@ -238,11 +238,12 @@ Packaging reminder: the zip must contain files at the **top level** of the archi
 Screenshots live in [`docs/media/`](media/). After they are on `main`, paste HTML like this into the AnkiWeb listing description (same files as the README):
 
 ```html
-<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-dark.png" />
-<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-light.png" />
-<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-2-dark.png" />
-<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/general-tab.png" />
-<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/appearance-tab.png" />
+<p><b>Dark mode</b> · <b>Light mode</b></p>
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-dark.png" width="48%" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-light.png" width="48%" />
+<p><b>Settings — General</b> · <b>Settings — Appearance</b></p>
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/general-tab.png" width="48%" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/appearance-tab.png" width="48%" />
 ```
 
 ## Automated tests (no Anki)
