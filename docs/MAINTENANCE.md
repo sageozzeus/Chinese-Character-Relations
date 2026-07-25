@@ -37,18 +37,21 @@ hanzi-relatives/
 ├── chinese_char_relations/     # THE add-on (this folder is what Anki loads)
 │   ├── __init__.py             # Hooks + Tools menu + Config action
 │   ├── manifest.json           # Offline install identity
+│   ├── about_meta.py           # Version, author links, changelog (About tab)
 │   ├── config.json             # Default config (Anki merges user meta.json)
 │   ├── config.md               # Short help text
-│   ├── config_dialog.py        # GUI settings (decks, fields, options)
+│   ├── config_dialog.py        # GUI settings (General / Appearance / About)
 │   ├── cjk.py                  # CJK extract / HTML strip
 │   ├── indexer.py              # Build + query inverted index
 │   ├── render.py               # HTML/CSS for Related panel
 │   └── reviewer.py             # Answer/question hooks + injection
 ├── preview/
-│   └── preview.html            # Browser UI sandbox (NOT shipped in .ankiaddon)
+│   ├── preview.html            # Browser UI sandbox — card panel (NOT shipped in .ankiaddon)
+│   └── config-preview.html     # Settings dialog mock — sync with config_dialog.py
 ├── docs/
 │   ├── MAINTENANCE.md          # This file
 │   └── TESTING.md              # Manual QA checklist
+├── LICENSE                     # MIT
 └── README.md                   # Install / symlink / AnkiWeb packaging
 ```
 
@@ -67,7 +70,8 @@ Anki loads Python at startup. There is **no hot reload**. After Python changes: 
 | Panel markup / CSS | `render.py` → `PANEL_CSS`, `render_panel` + sync `preview/preview.html` |
 | When panel appears / clears | `reviewer.py` → `on_show_answer`, `on_show_question` |
 | Click related word → Browser | `browser.py` + `pycmd` in `render.py` PANEL_JS |
-| Settings GUI (decks, fields, Appearance) | `config_dialog.py` + `defaults.py` |
+| Settings GUI (decks, fields, Appearance, About) | `config_dialog.py` + `defaults.py` + `about_meta.py` |
+| Version / About links / changelog | `about_meta.py` (keep preview About tab in sync) |
 | Panel CSS variables from Appearance tab | `render.py` → `_css_var_block` / `ui` config |
 | Menu / rebuild / Config button wiring | `__init__.py` |
 | Defaults users get on first install | `config.json` + `config.md` |
@@ -76,8 +80,10 @@ Anki loads Python at startup. There is **no hot reload**. After Python changes: 
 
 Users never edit JSON. The dialog is opened from:
 
-- **Tools → Character Relations → Settings…**
+- **Tools → Character Relations…** (opens settings GUI)
 - **Tools → Add-ons → Config** (via `mw.addonManager.setConfigAction`)
+
+Tabs: **General**, **Appearance**, **About** (read-only metadata from `about_meta.py`).
 
 `open_config()` must **not** return `False`, or Anki falls back to the raw JSON editor.
 
@@ -99,11 +105,11 @@ User edits are stored in the add-on’s `meta.json` under the profile’s `addon
 | --- | --- | --- |
 | `decks` | `string[]` | Empty → `find_notes("")`. Else union of `deck:"Name"` searches. |
 | `fields.word` | string | Required per note type; missing → skip note. |
-| `fields.pinyin` / `meaning` | string | Optional; blank if field absent. |
+| `fields.pinyin` | string | Optional; blank if field absent. |
 | `max_per_char` | int | Slice after filters. |
 | `include_suspended` | bool | Applied at **lookup** (no rebuild needed). |
 | `candidate_min_length` | int | Min CJK char count on candidate words. |
-| `show_on_answer_only` | bool | MVP always injects on answer; front is cleared on question. |
+| `show_only_on_back` | bool | On = answer only; off = front + back. Legacy `show_on_answer_only` still read. |
 
 After changing `decks` or `fields`, users must **Rebuild Index**.
 
@@ -116,12 +122,12 @@ for each note in target decks:
   entry = {note_id, word, pinyin, meaning, suspended}
   for ch in chars:
     index[ch].append(entry)   # dedupe by note_id
-sort each list: (cjk_length, word)
+sort each list: (status, cjk_length, word) — status: mature (0), active learning (1), suspended (2)
 ```
 
 **Suspended:** note has no card with `queue != -1` (built via one SQL `distinct nid` query, not per-note card fetches).
 
-**Lookup:** for each char in current word → exclude `entry.word == current` → apply suspended + min length → take `max_per_char`.
+**Lookup:** for each char in current word → exclude current note/word → apply suspended + min length → sort by `_sort_key` → take first `max_per_char`.
 
 Do **not** run `find_notes` / full collection scans inside `on_show_answer`. That must stay O(chars × max_per_char).
 
@@ -200,9 +206,10 @@ Extension points already shaped for this:
 
 4. Upload at https://ankiweb.net/shared/addons/
 5. AnkiWeb assigns a numeric folder id on install; `manifest.json` `package` matters mainly for offline `.ankiaddon` installs
+6. After the listing exists, set `URL_ANKIWEB` in `about_meta.py` to  
+   `https://ankiweb.net/shared/info/<id>` so the About tab shows **AnkiWeb page** and **Rate / review**. Mirror that in `preview/config-preview.html`.
 
-Update description when behavior changes. Bump any human version string you put in the AnkiWeb listing (there is no separate version file in MVP).
-
+Update the AnkiWeb description when behavior changes. Bump the human version in **`about_meta.py`** (`ADDON_VERSION` + prepend a `CHANGELOG` entry) whenever you ship, and match the AnkiWeb listing version string.
 ## Automated tests (no Anki)
 
 CJK helpers are covered by unittest (does not need Anki/`aqt`):

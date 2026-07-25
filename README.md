@@ -19,8 +19,8 @@ Works offline. Uses only `mw.col` (no AnkiConnect, no external dictionary for MV
    `~/Library/Application Support/Anki2/addons21/`
 
 2. Restart Anki.
-3. **Tools → Character Relations → Settings…** (or Add-ons → Config) — pick decks and field names from dropdowns. No JSON editing.
-4. When prompted, rebuild the index (or use **Tools → Character Relations → Rebuild Index**).
+3. **Tools → Character Relations…** (or **Tools → Add-ons → Config**) — opens settings. No JSON editing.
+4. On the **General** tab, click **Rebuild Index** (also offered after saving deck/field changes).
 
 ## Development setup (symlink)
 
@@ -41,29 +41,30 @@ Maintainer deep-dive: [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md).
 
 ## UI preview (no Anki)
 
-Open [`preview/preview.html`](preview/preview.html) in a browser (**Cmd+O**).
+- **Card panel:** [`preview/preview.html`](preview/preview.html) — answer-side Relatives UI (**Cmd+O** in Finder, or open via local server).
+- **Settings dialog:** [`preview/config-preview.html`](preview/config-preview.html) — mock of **Tools → Character Relations…**
 
-Edit the `.char-relations*` CSS there, then copy the same rules into `chinese_char_relations/render.py` (`PANEL_CSS`).
+Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `chinese_char_relations/render.py` (`PANEL_CSS`). Tweak settings layout/copy in `config-preview.html`, then mirror in `config_dialog.py`.
 
 ## Config
 
-Use the GUI (**Tools → Character Relations → Settings…**):
+Use the GUI (**Tools → Character Relations…**, or Add-ons → **Config**):
 
-- **General** — decks, fields, display caps
-- **Appearance** — max width, type sizes, colors (light/dark), shadow, optional custom CSS
+- **General** — decks, fields, display caps, **Rebuild Index**
+- **Appearance** — max width, type sizes, colors (light/dark), optional custom CSS
+- **About** — version, license, changelog, GitHub / X / bug report links (AnkiWeb after publish)
 
 Appearance changes apply on the next answer flip (no rebuild). Defaults:
 
 | Key | Default | Notes |
 | --- | --- | --- |
-| Decks | All decks | Or multi-select specific decks |
+| Decks | All decks | Dropdown multi-select; empty = all |
 | Word / Hanzi | `Word` | Headword field |
 | Pinyin | `Pinyin` | Optional |
-| Meaning | `Meaning` | Optional |
 | Max per character | `8` | Cap per character group |
 | Include suspended | yes | Filter at lookup time |
 | Min word length | `2` | Min CJK length for relatives |
-| Answer side only | yes | MVP |
+| Show only on back | yes | Off = front and back |
 
 ## Manual test checklist
 
@@ -73,7 +74,7 @@ Appearance changes apply on the next answer flip (no rebuild). Defaults:
 - [ ] `include_suspended: false` hides fully inactive notes
 - [ ] Wrong / missing field names → no crash (tooltip at most once per session)
 - [ ] After adding a note, **Rebuild Index** makes it appear in Related
-- [ ] Front of card has no Related panel; answer shows it when relations exist
+- [ ] Front of card has no Related panel when **Show only on back** is on; shows on both sides when off
 - [ ] Empty relations → no empty box under the card
 
 ## Package for AnkiWeb
@@ -91,6 +92,11 @@ Upload at https://ankiweb.net/shared/addons/ (zip must contain files at top leve
 - [Maintenance & architecture](docs/MAINTENANCE.md) — how to change index, hooks, UI, publish
 - [Manual test details](docs/TESTING.md)
 
+## Links
+
+- GitHub: https://github.com/sageozzeus/Chinese-Character-Relations
+- X: https://x.com/sageozzeus
+
 ## License
 
-MIT (or your choice when publishing).
+MIT — see [`LICENSE`](LICENSE).

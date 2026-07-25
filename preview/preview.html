@@ -24,6 +24,12 @@
       max-width: 40em;
       text-align: center;
     }
+    .top-nav {
+      font-size: 0.8rem;
+    }
+    .top-nav a {
+      color: #1a4a8a;
+    }
     .previews {
       display: flex;
       flex-wrap: wrap;
@@ -81,19 +87,38 @@
       max-width: 36em;
       display: flex;
       flex-direction: column;
-      gap: 0.65em;
+      gap: 0.75em;
       text-align: left;
       font-size: 0.92em;
       line-height: 1.35;
       color: inherit;
       box-sizing: border-box;
-    }
-    .char-relations-group {
       padding: 0.75em 0.9em 0.85em;
       border: 1px solid rgba(120, 120, 120, 0.28);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.65);
+      background: #e4ecf6;
       box-shadow: 0 3px 8px rgba(40, 35, 30, 0.07);
+    }
+    .char-relations-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5em;
+      margin-bottom: 0.4em;
+    }
+    .char-relations-heading .char-relations-char {
+      margin-bottom: 0;
+      line-height: 1;
+    }
+    .char-relations-title {
+      font-weight: 700;
+      font-size: 0.9em;
+      margin: 0;
+      line-height: 1;
+      flex: 0 0 auto;
+      color: #1a3a6b;
+    }
+    .char-relations-group {
       box-sizing: border-box;
     }
     .char-relations-char {
@@ -153,6 +178,10 @@
       top: 50%;
       transform: translateY(-50%);
       z-index: 2;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 1.35em;
       height: 1.35em;
       padding: 0;
@@ -162,13 +191,30 @@
       background: rgba(255, 255, 255, 0.92);
       color: inherit;
       font-size: 0.95em;
-      font-weight: 400;
-      line-height: 1;
+      line-height: 0;
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.15s ease;
       box-shadow: 0 2px 6px rgba(40, 35, 30, 0.08);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .char-relations-arrow::before {
+      content: "";
+      display: block;
+      width: 0.36em;
+      height: 0.36em;
+      box-sizing: border-box;
+      border: solid currentColor;
+      border-width: 0 0 0.13em 0.13em;
+    }
+    .char-relations-arrow-left::before {
+      transform: rotate(45deg);
+    }
+    .char-relations-arrow-right::before {
+      border-width: 0.13em 0.13em 0 0;
+      transform: rotate(45deg);
     }
     .char-relations-arrow-left { left: 0; }
     .char-relations-arrow-right { right: 0; }
@@ -196,11 +242,15 @@
       opacity: 0.85;
     }
 
-    .nightMode .char-relations-group,
-    .night-mode .char-relations-group {
+    .nightMode .char-relations,
+    .night-mode .char-relations {
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(48, 50, 56, 0.95);
+      background: #2a303a;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+    }
+    .nightMode .char-relations-title,
+    .night-mode .char-relations-title {
+      color: #b8dcff;
     }
     .nightMode .char-relations-char,
     .night-mode .char-relations-char {
@@ -236,8 +286,13 @@
   </style>
 </head>
 <body>
+  <nav class="top-nav">
+    <strong>Card UI preview</strong>
+    <span aria-hidden="true"> · </span>
+    <a href="config-preview.html">Config UI preview</a>
+  </nav>
   <p class="hint">
-    Narrow cards force overflow. Hover a character card — edge arrows appear when scrollable.
+    Narrow cards force overflow. Hover a character row — edge arrows appear when scrollable.
     No scrollbar. Trackpad / shift-scroll also works.
   </p>
 
@@ -252,34 +307,37 @@
         </div>
         <div class="char-relations">
           <div class="char-relations-group">
-            <div class="char-relations-char">好</div>
+            <div class="char-relations-heading">
+              <div class="char-relations-char">好</div>
+              <div class="char-relations-title">Relatives</div>
+            </div>
             <div class="char-relations-scroll">
-              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎode</span><span class="char-relations-word">好的</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎotīng</span><span class="char-relations-word">好听</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
-                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎokàn</span><span class="char-relations-word">好看</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">zuìhǎo</span><span class="char-relations-word">最好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
                 <span class="char-relations-item"><span class="char-relations-pinyin">hǎoxiào</span><span class="char-relations-word">好笑</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
               </div>
-              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right"></button>
             </div>
           </div>
           <div class="char-relations-group">
             <div class="char-relations-char">像</div>
             <div class="char-relations-scroll">
-              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xiǎngxiàng</span><span class="char-relations-word">想像</span></span>
-                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xíngxiàng</span><span class="char-relations-word">形象</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
                 <span class="char-relations-item"><span class="char-relations-pinyin">duìxiàng</span><span class="char-relations-word">对象</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
               </div>
-              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right"></button>
             </div>
           </div>
         </div>
@@ -296,34 +354,37 @@
         </div>
         <div class="char-relations">
           <div class="char-relations-group">
-            <div class="char-relations-char">好</div>
+            <div class="char-relations-heading">
+              <div class="char-relations-char">好</div>
+              <div class="char-relations-title">Relatives</div>
+            </div>
             <div class="char-relations-scroll">
-              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎode</span><span class="char-relations-word">好的</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎotīng</span><span class="char-relations-word">好听</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
-                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">hǎokàn</span><span class="char-relations-word">好看</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">zuìhǎo</span><span class="char-relations-word">最好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">yǒuhǎo</span><span class="char-relations-word">友好</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">hǎochī</span><span class="char-relations-word">好吃</span></span>
                 <span class="char-relations-item"><span class="char-relations-pinyin">hǎoxiào</span><span class="char-relations-word">好笑</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">hàoqí</span><span class="char-relations-word">好奇</span></span>
               </div>
-              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right"></button>
             </div>
           </div>
           <div class="char-relations-group">
             <div class="char-relations-char">像</div>
             <div class="char-relations-scroll">
-              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left">‹</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xiǎngxiàng</span><span class="char-relations-word">想像</span></span>
-                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
-                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
                 <span class="char-relations-item is-mature"><span class="char-relations-pinyin">xíngxiàng</span><span class="char-relations-word">形象</span></span>
+                <span class="char-relations-item"><span class="char-relations-pinyin">xiàngyàng</span><span class="char-relations-word">像样</span></span>
                 <span class="char-relations-item"><span class="char-relations-pinyin">duìxiàng</span><span class="char-relations-word">对象</span></span>
+                <span class="char-relations-item is-suspended"><span class="char-relations-pinyin">huàxiàng</span><span class="char-relations-word">画像</span></span>
               </div>
-              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right">›</button>
+              <button type="button" class="char-relations-arrow char-relations-arrow-right" aria-label="Scroll right"></button>
             </div>
           </div>
         </div>

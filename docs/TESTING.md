@@ -6,15 +6,15 @@ Run these after any change to indexing, rendering, or hooks. Use a small Chinese
 
 1. Symlink or install the add-on; restart Anki (**Cmd+Q**, reopen)
 2. Config fields to match your note type
-3. **Tools → Character Relations → Rebuild Index** — tooltip should show note/char counts
+3. **Tools → Character Relations…** → General → **Rebuild Index** — tooltip should show note/char counts
 
 ## Cases
 
 ### 0. Settings GUI
 
-- Open **Tools → Character Relations → Settings…**
-- **Expect:** dialog with deck checklist, field dropdowns, display options (not a JSON editor)
-- Change a field, Save, rebuild when asked
+- Open **Tools → Character Relations…**
+- **Expect:** dialog with General / Appearance tabs (not a JSON editor)
+- Change a field, Save, rebuild when asked (or use **Rebuild Index** on General)
 - Open **Tools → Add-ons → Chinese Character Relations → Config**
 - **Expect:** same GUI dialog (not raw JSON)
 

@@ -16,7 +16,7 @@
 - Case-insensitive field match + fallbacks (`Hanzi`, `Expression`, …).
 - When index stays empty, show a dialog with scan/skip counts and which note types lack the field.
 
-**User action:** Tools → Character Relations → Settings… → set **Word / Hanzi** to the field that actually contains Chinese → Rebuild Index.
+**User action:** Tools → Character Relations… → set **Word / Hanzi** to the field that actually contains Chinese → **Rebuild Index** on the General tab.
 
 ---
 
@@ -61,3 +61,27 @@
 **Cause:** Unquoted `deck:` fallback only ran when the whole `note_ids` set was still empty, so after the first deck contributed IDs, later decks that needed the fallback were skipped.
 
 **Fix:** Resolve each deck independently via `_note_ids_for_deck` (quoted search → unquoted → SQL by deck id), then union the results.
+
+---
+
+## Settings toggles look like solid blue pills / deck arrow misaligned
+
+**Cause:** Anki’s Qt stylesheet fights `QCheckBox::indicator` “toggle” CSS (no real knob) and `QToolButton::menu-indicator` (arrow position is theme-dependent).
+
+**Fix:** Use a custom `ToggleSwitch` (`QAbstractButton` + `paintEvent` for track/knob) and a `QFrame` deck picker with a centered `▾` label instead of `QToolButton`.
+
+---
+
+## About tab metadata looks centered
+
+**Cause:** On macOS, `QFormLayout` defaults to horizontal center form alignment, so Name/Version/Author rows sit in the middle of the group box.
+
+**Fix:** Use `_about_form()` — `setFormAlignment(AlignLeft | AlignTop)`, left label alignment, and left-align tip labels / link rows.
+
+---
+
+## Settings dialog has horizontal scrollbar / fields too wide
+
+**Cause:** `QComboBox` defaults to sizing from longest item; deck summary `QLabel` also reported a huge min width for long deck paths.
+
+**Fix:** `AdjustToMinimumContentsLengthWithIcon`, `minimumWidth(0)`, elide deck summary text, disable horizontal scroll on the tab `QScrollArea`.

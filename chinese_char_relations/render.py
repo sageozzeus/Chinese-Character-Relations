@@ -18,19 +18,38 @@ PANEL_CSS = """
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--cr-gap, 0.65em);
+  gap: var(--cr-gap, 0.75em);
   text-align: left;
   font-size: 0.92em;
   line-height: 1.35;
   color: inherit;
   box-sizing: border-box;
-}
-.char-relations-group {
   padding: 0.75em 0.9em 0.85em;
   border: 1px solid var(--cr-border, #b0b0b0);
   border-radius: var(--cr-radius, 12px);
-  background: var(--cr-bg, #ffffff);
+  background: var(--cr-bg, #e4ecf6);
   box-shadow: var(--cr-shadow, 0 3px 8px rgba(40, 35, 30, 0.07));
+}
+.char-relations-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-bottom: 0.4em;
+}
+.char-relations-heading .char-relations-char {
+  margin-bottom: 0;
+  line-height: 1;
+}
+.char-relations-title {
+  font-weight: 700;
+  font-size: 0.9em;
+  margin: 0;
+  line-height: 1;
+  flex: 0 0 auto;
+  color: var(--cr-title, #1a3a6b);
+}
+.char-relations-group {
   box-sizing: border-box;
 }
 .char-relations-char {
@@ -90,22 +109,43 @@ PANEL_CSS = """
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 1.35em;
   height: 1.35em;
   padding: 0;
   margin: 0;
   border: 1px solid var(--cr-border, #b0b0b0);
   border-radius: 999px;
-  background: var(--cr-bg, #ffffff);
+  background: var(--cr-bg, #e4ecf6);
   color: inherit;
   font-size: 0.95em;
-  font-weight: 400;
-  line-height: 1;
+  line-height: 0;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
   box-shadow: var(--cr-shadow, 0 2px 6px rgba(40, 35, 30, 0.08));
+  -webkit-appearance: none;
+  appearance: none;
+}
+.char-relations-arrow::before {
+  content: "";
+  display: block;
+  width: 0.36em;
+  height: 0.36em;
+  box-sizing: border-box;
+  border: solid currentColor;
+  border-width: 0 0 0.13em 0.13em;
+}
+.char-relations-arrow-left::before {
+  transform: rotate(45deg);
+}
+.char-relations-arrow-right::before {
+  border-width: 0.13em 0.13em 0 0;
+  transform: rotate(45deg);
 }
 .char-relations-arrow-left { left: 0; }
 .char-relations-arrow-right { right: 0; }
@@ -133,11 +173,15 @@ PANEL_CSS = """
   opacity: 0.85;
 }
 
-.nightMode .char-relations-group,
-.night-mode .char-relations-group {
+.nightMode .char-relations,
+.night-mode .char-relations {
   border-color: var(--cr-border-dark, #5a5a5a);
-  background: var(--cr-bg-dark, #303238);
+  background: var(--cr-bg-dark, #2a303a);
   box-shadow: var(--cr-shadow-dark, 0 4px 10px rgba(0, 0, 0, 0.28));
+}
+.nightMode .char-relations-title,
+.night-mode .char-relations-title {
+  color: var(--cr-title-dark, #b8dcff);
 }
 .nightMode .char-relations-char,
 .night-mode .char-relations-char {
@@ -150,7 +194,7 @@ PANEL_CSS = """
 .nightMode .char-relations-arrow,
 .night-mode .char-relations-arrow {
   border-color: var(--cr-border-dark, #5a5a5a);
-  background: var(--cr-bg-dark, #303238);
+  background: var(--cr-bg-dark, #2a303a);
   color: #e8e8e8;
   box-shadow: var(--cr-shadow-dark, 0 2px 8px rgba(0, 0, 0, 0.3));
 }
@@ -247,8 +291,8 @@ def _css_var_block(ui: dict[str, Any]) -> str:
         "--cr-char-size": f"{float(ui.get('char_size_em', 1.05))}em",
         "--cr-word-size": f"{float(ui.get('word_size_em', 0.82))}em",
         "--cr-pinyin-size": f"{float(ui.get('pinyin_size_em', 0.62))}em",
-        "--cr-bg": str(ui.get("bg_light") or "#ffffff"),
-        "--cr-bg-dark": str(ui.get("bg_dark") or "#303238"),
+        "--cr-bg": str(ui.get("bg_light") or "#e4ecf6"),
+        "--cr-bg-dark": str(ui.get("bg_dark") or "#2a303a"),
         "--cr-border": str(ui.get("border_light") or "#b0b0b0"),
         "--cr-border-dark": str(ui.get("border_dark") or "#5a5a5a"),
         "--cr-mature": str(ui.get("mature_light") or "#2e7d32"),
@@ -288,13 +332,19 @@ def render_panel(
         f'<div class="char-relations" id="char-relations-panel" style="{_css_var_block(ui)}">',
     ]
 
-    for ch, entries in groups:
+    for i, (ch, entries) in enumerate(groups):
         parts.append('<div class="char-relations-group">')
-        parts.append(f'<div class="char-relations-char">{escape(ch)}</div>')
+        if i == 0:
+            parts.append('<div class="char-relations-heading">')
+            parts.append(f'<div class="char-relations-char">{escape(ch)}</div>')
+            parts.append('<div class="char-relations-title">Relatives</div>')
+            parts.append("</div>")
+        else:
+            parts.append(f'<div class="char-relations-char">{escape(ch)}</div>')
         parts.append('<div class="char-relations-scroll">')
         parts.append(
             '<button type="button" class="char-relations-arrow char-relations-arrow-left" '
-            'aria-label="Scroll left">‹</button>'
+            'aria-label="Scroll left"></button>'
         )
         parts.append('<div class="char-relations-items">')
         for entry in entries:
@@ -312,7 +362,7 @@ def render_panel(
         parts.append("</div>")
         parts.append(
             '<button type="button" class="char-relations-arrow char-relations-arrow-right" '
-            'aria-label="Scroll right">›</button>'
+            'aria-label="Scroll right"></button>'
         )
         parts.append("</div>")
         parts.append("</div>")

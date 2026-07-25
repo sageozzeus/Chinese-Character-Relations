@@ -13,8 +13,8 @@ DEFAULT_UI: dict[str, Any] = {
     "char_size_em": 1.05,
     "word_size_em": 0.82,
     "pinyin_size_em": 0.62,
-    "bg_light": "#ffffff",
-    "bg_dark": "#303238",
+    "bg_light": "#e4ecf6",
+    "bg_dark": "#2a303a",
     "border_light": "#b0b0b0",
     "border_dark": "#5a5a5a",
     "mature_light": "#2e7d32",
@@ -30,12 +30,11 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "fields": {
         "word": "Word",
         "pinyin": "Pinyin",
-        "meaning": "Meaning",
     },
     "max_per_char": 8,
     "include_suspended": True,
     "candidate_min_length": 2,
-    "show_on_answer_only": True,
+    "show_only_on_back": True,
     "ui": deepcopy(DEFAULT_UI),
 }
 
@@ -46,6 +45,9 @@ def merge_config(raw: dict[str, Any] | None) -> dict[str, Any]:
     if not raw:
         return merged
     for key, value in raw.items():
+        if key == "show_on_answer_only" and "show_only_on_back" not in raw:
+            merged["show_only_on_back"] = bool(value)
+            continue
         if key == "fields" and isinstance(value, dict):
             merged["fields"] = {**merged["fields"], **value}
         elif key == "ui" and isinstance(value, dict):

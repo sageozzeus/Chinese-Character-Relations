@@ -2,23 +2,23 @@
 
 Settings are edited in a **GUI dialog** (no JSON editing required):
 
-- **Tools → Character Relations → Settings…**
+- **Tools → Character Relations…**
 - or **Tools → Add-ons → Chinese Character Relations → Config**
 
 ## General tab
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| Decks | All decks | Empty list in storage = all decks; otherwise only checked decks |
+| Decks | All decks | Dropdown with checkboxes; empty list in storage = all decks |
 | Word / Hanzi field | `Word` | Headword field on notes |
 | Pinyin field | `Pinyin` | Reading (optional) |
-| Meaning field | `Meaning` | Gloss (optional) |
 | Max per character | `8` | Cap on related rows per character group |
 | Include suspended | yes | Show notes whose cards are all suspended |
 | Min word length | `2` | Minimum CJK length for related candidates |
-| Show on answer only | yes | Related panel only after flip (MVP) |
+| Show only on back | yes | Off = show relatives on front and back during review |
+| Rebuild Index | button | Scans decks and refreshes the character → notes index |
 
-After changing decks or fields, rebuild when prompted (or **Tools → Character Relations → Rebuild Index**).
+After changing decks or fields, rebuild when prompted (or use **Rebuild Index** on this tab).
 
 ## Appearance tab
 
@@ -28,10 +28,13 @@ Customize Related panel look. Applies on the next answer flip (no rebuild).
 | --- | --- | --- |
 | Max width | `100%` | e.g. `100%`, `36em`, `650px` — match your card template |
 | Corner radius | `12` px | |
-| Gap between cards | `0.65` em | Space between character groups |
+| Gap between cards | `0.65` em | Label in UI: **Card gaps** |
 | Type sizes | char / word / pinyin | Relative `em` sizes |
-| Colors | light + dark | Background, border, mature (green), suspended (red) |
-| Drop shadow | on | |
+| Colors | light + dark | 4×2 grid; background, border, mature, suspended |
 | Custom CSS | empty | Advanced overrides for `.char-relations*` |
+
+## About tab
+
+Read-only. Version, license, changelog, and links (GitHub Issues for bugs, GitHub repo, X). AnkiWeb / Rate links appear after `URL_ANKIWEB` is set in `about_meta.py`.
 
 `config.json` supplies defaults for first install. User values live in `meta.json`.

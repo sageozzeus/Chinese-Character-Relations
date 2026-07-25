@@ -214,8 +214,9 @@ class CharIndex:
                 if min_len and cjk_length(entry.word) < min_len:
                     continue
                 filtered.append(entry)
-                if len(filtered) >= max_per_char:
-                    break
+            filtered.sort(key=self._sort_key)
+            if len(filtered) > max_per_char:
+                filtered = filtered[:max_per_char]
             if filtered:
                 groups.append((ch, filtered))
         return groups
@@ -393,9 +394,9 @@ def _explain_zero(stats: BuildStats, config: dict[str, Any]) -> None:
     lines.extend(
         [
             "",
-            "Fix: Tools → Character Relations → Settings…",
+            "Fix: Tools → Character Relations…",
             "Set Word / Hanzi to the field that holds Chinese text,",
-            "then Rebuild Index.",
+            "then Rebuild Index on the General tab.",
         ]
     )
     showInfo("\n".join(lines))

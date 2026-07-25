@@ -22,6 +22,12 @@ def _config() -> dict[str, Any]:
     return merge_config(mw.addonManager.getConfig(_package_name()))
 
 
+def _show_only_on_back(config: dict[str, Any]) -> bool:
+    if "show_only_on_back" in config:
+        return bool(config["show_only_on_back"])
+    return bool(config.get("show_on_answer_only", True))
+
+
 def _field(config: dict[str, Any], key: str, default: str) -> str:
     fields = config.get("fields") or {}
     return (fields.get(key) or default).strip()
@@ -69,7 +75,10 @@ def on_card_will_show(html: str, card: Card, context: str) -> str:
 
     Prefer this over webview.eval — fade/DOM updates often wipe late eval inserts.
     """
-    if context != "reviewAnswer":
+    if context not in ("reviewAnswer", "reviewQuestion"):
+        return html
+    config = _config()
+    if _show_only_on_back(config) and context != "reviewAnswer":
         return html
     panel = panel_html_for_card(card)
     if not panel:
@@ -109,6 +118,8 @@ def on_show_answer(card: Card) -> None:
 
 
 def on_show_question(card: Card) -> None:
+    if not _show_only_on_back(_config()):
+        return
     # card_will_show replaces #qa content; nothing required.
     # Clear any leftover fallback injection just in case.
     if mw.reviewer is None or mw.reviewer.web is None:
