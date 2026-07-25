@@ -214,24 +214,48 @@ Extension points already shaped for this:
 - `related_for` — sorting/filtering lives in one place
 - `render_panel` — can add `data-nid` attributes later
 
-## Publishing to AnkiWeb
+## Packaging `.ankiaddon`
 
-1. Ensure `preview/` is **not** inside the zip (it isn’t under `chinese_char_relations/`)
-2. Delete `__pycache__`
-3. From inside `chinese_char_relations/`:
+Build from the repo root. Exclude `__pycache__`, `meta.json` (user-local), and OS junk. Zip contents must be **top-level files** (no wrapping folder):
+
+```bash
+VERSION=$(python3 -c "from chinese_char_relations.about_meta import ADDON_VERSION; print(ADDON_VERSION)")
+OUT="chinese_char_relations-${VERSION}.ankiaddon"
+rm -f "$OUT"
+(
+  cd chinese_char_relations
+  zip -r "../$OUT" . \
+    -x '*/__pycache__/*' '*.pyc' 'meta.json' '.DS_Store' '*/.DS_Store'
+)
+unzip -l "$OUT"   # sanity-check: __init__.py at archive root
+```
+
+`preview/`, `docs/`, and tests stay outside `chinese_char_relations/` so they are never included.
+
+### GitHub Release
+
+1. Bump `ADDON_VERSION` + changelog in `about_meta.py` when shipping a new version.
+2. Build the `.ankiaddon` as above.
+3. Commit/push README/docs if install links need the new filename.
+4. Create a release and attach the asset (download counts only apply to uploaded assets, not Source code zips):
 
    ```bash
-   zip -r ../chinese_char_relations.ankiaddon *
+   gh release create "v${VERSION}" "$OUT" \
+     --title "v${VERSION}" \
+     --notes "Chinese Character Relations ${VERSION}."
    ```
 
-4. Upload at https://ankiweb.net/shared/addons/
-5. AnkiWeb assigns a numeric folder id on install; `manifest.json` `package` matters mainly for offline `.ankiaddon` installs
-6. After the listing exists, set `URL_ANKIWEB` in `about_meta.py` to  
+5. Point the README install link at `/releases/latest` (already does).
+
+### Publishing to AnkiWeb
+
+1. Build the same `.ankiaddon` as above.
+2. Upload at https://ankiweb.net/shared/addons/
+3. AnkiWeb assigns a numeric folder id on install; `manifest.json` `package` matters mainly for offline `.ankiaddon` installs
+4. After the listing exists, set `URL_ANKIWEB` in `about_meta.py` to  
    `https://ankiweb.net/shared/info/<id>` so the About tab shows **AnkiWeb page** and **Rate / review**. Mirror that in `preview/config-preview.html`.
 
-Update the AnkiWeb description when behavior changes. Bump the human version in **`about_meta.py`** (`ADDON_VERSION` + prepend a `CHANGELOG` entry) whenever you ship, and match the AnkiWeb listing version string.
-
-Packaging reminder: the zip must contain files at the **top level** of the archive (not a wrapping folder). `preview/`, `docs/`, and tests stay outside `chinese_char_relations/` so they are not included.
+Update the AnkiWeb description when behavior changes. Match the AnkiWeb listing version string to `ADDON_VERSION`.
 
 ### AnkiWeb description images
 

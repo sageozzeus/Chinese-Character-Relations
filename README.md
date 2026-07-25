@@ -39,20 +39,26 @@ Works offline. Uses only your collection — no external dictionary, no AnkiConn
 
 ## Install
 
-**From AnkiWeb** (when the listing is live): search for *Chinese Character Relations* in **Tools → Add-ons → Get Add-ons…**, or open the listing from the About tab after install.
+### From GitHub (recommended until AnkiWeb is live)
 
-**From this repo:**
+1. Open the latest [Release](https://github.com/sageozzeus/Chinese-Character-Relations/releases/latest).
+2. Download the **`.ankiaddon`** asset (e.g. `chinese_char_relations-0.1.0.ankiaddon`), not Source code.
+3. Double-click the file, or open it with Anki / drag it onto the Anki window.
+4. Restart Anki when prompted.
+5. Open **Tools → Character Relations…**
+6. On the **General** tab, set your Word / Hanzi (and optional Pinyin) fields, then click **Rebuild Index**.
 
-1. Download or clone the repository.
-2. Copy the `chinese_char_relations` folder into your Anki add-ons folder:
+### From AnkiWeb
 
-   - **macOS:** `~/Library/Application Support/Anki2/addons21/`
-   - **Windows:** `%APPDATA%\Anki2\addons21\`
-   - **Linux:** `~/.local/share/Anki2/addons21/`
+When the listing is live: **Tools → Add-ons → Get Add-ons…**, search for *Chinese Character Relations*, or open the listing from the About tab after install.
 
-3. Restart Anki.
-4. Open **Tools → Character Relations…**
-5. On the **General** tab, set your Word / Hanzi (and optional Pinyin) fields, then click **Rebuild Index**.
+### Manual (developers)
+
+Copy the `chinese_char_relations` folder into your Anki add-ons folder, then restart Anki:
+
+- **macOS:** `~/Library/Application Support/Anki2/addons21/`
+- **Windows:** `%APPDATA%\Anki2\addons21\`
+- **Linux:** `~/.local/share/Anki2/addons21/`
 
 ## Settings
 
