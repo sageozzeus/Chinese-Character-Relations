@@ -233,6 +233,18 @@ Update the AnkiWeb description when behavior changes. Bump the human version in 
 
 Packaging reminder: the zip must contain files at the **top level** of the archive (not a wrapping folder). `preview/`, `docs/`, and tests stay outside `chinese_char_relations/` so they are not included.
 
+### AnkiWeb description images
+
+Screenshots live in [`docs/media/`](media/). After they are on `main`, paste HTML like this into the AnkiWeb listing description (same files as the README):
+
+```html
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-dark.png" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-light.png" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/preview-2-dark.png" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/general-tab.png" />
+<img src="https://raw.githubusercontent.com/sageozzeus/Chinese-Character-Relations/main/docs/media/appearance-tab.png" />
+```
+
 ## Automated tests (no Anki)
 
 CJK helpers are covered by unittest (does not need Anki/`aqt`):

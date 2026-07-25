@@ -7,6 +7,18 @@ Reviewing **好像** → groups by 好 and 像 (the current word is excluded).
 
 Works offline. Uses only your collection — no external dictionary, no AnkiConnect.
 
+## Screenshots
+
+![Related words on the answer side (dark)](docs/media/preview-dark.png)
+
+![Related words on the answer side (light)](docs/media/preview-light.png)
+
+![Multi-character card with Relatives (dark)](docs/media/preview-2-dark.png)
+
+![General settings](docs/media/general-tab.png)
+
+![Appearance settings](docs/media/appearance-tab.png)
+
 ## Requirements
 
 - Anki Desktop **23.10+** (Qt6 preferred)
