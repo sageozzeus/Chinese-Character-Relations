@@ -7,6 +7,7 @@ from html import escape
 from typing import Any, Optional
 
 from .defaults import merge_ui
+from .hanzi_data import HanziEntry, get as get_hanzi_entry
 from .indexer import RelatedEntry
 
 # Structural CSS — colors/sizes come from CSS variables set per render.
@@ -48,6 +49,23 @@ PANEL_CSS = """
   line-height: 1;
   flex: 0 0 auto;
   color: var(--cr-title, #1a3a6b);
+}
+.char-relations-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75em;
+  margin-bottom: 0.45em;
+}
+.char-relations-top-row .char-relations-decomp {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+.char-relations-top-row .char-relations-title {
+  text-align: right;
+  align-self: flex-start;
+  padding-top: 0.05em;
 }
 .char-relations-group {
   box-sizing: border-box;
@@ -172,6 +190,68 @@ PANEL_CSS = """
 .char-relations-item.is-suspended .char-relations-pinyin {
   opacity: 0.85;
 }
+.char-relations-decomp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.55em 0.95em;
+  margin-bottom: 0.45em;
+  padding: 0.1em 0;
+}
+.char-relations-decomp-arrow {
+  align-self: flex-end;
+  opacity: 0.55;
+  font-size: 0.95em;
+  line-height: 1;
+  padding: 0 0.02em 0.12em;
+}
+.char-relations-decomp-item {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08em;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  cursor: default;
+}
+.char-relations-decomp-item.is-component .char-relations-decomp-hanzi {
+  color: var(--cr-title, #1a3a6b);
+}
+.char-relations-decomp-hanzi {
+  font-size: var(--cr-char-size, 1.05em);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.char-relations-decomp-gloss {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.35em);
+  transform: translateX(-50%);
+  z-index: 5;
+  min-width: 8em;
+  max-width: 14em;
+  padding: 0.35em 0.45em;
+  font-size: 0.62em;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  color: inherit;
+  background: var(--cr-bg, #e4ecf6);
+  border: 1px solid var(--cr-border, #b0b0b0);
+  border-radius: 6px;
+  box-shadow: var(--cr-shadow, 0 2px 6px rgba(40, 35, 30, 0.08));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+.char-relations-decomp-item:hover .char-relations-decomp-gloss,
+.char-relations-decomp-item:focus-within .char-relations-decomp-gloss {
+  opacity: 1;
+  visibility: visible;
+}
 
 .nightMode .char-relations,
 .night-mode .char-relations {
@@ -213,6 +293,16 @@ PANEL_CSS = """
 .night-mode .char-relations-item.is-suspended .char-relations-pinyin,
 .night-mode .char-relations-item.is-suspended .char-relations-word {
   color: var(--cr-suspended-dark, #ef9a9a);
+}
+.nightMode .char-relations-decomp-item.is-component .char-relations-decomp-hanzi,
+.night-mode .char-relations-decomp-item.is-component .char-relations-decomp-hanzi {
+  color: var(--cr-title-dark, #b8dcff);
+}
+.nightMode .char-relations-decomp-gloss,
+.night-mode .char-relations-decomp-gloss {
+  background: var(--cr-bg-dark, #2a303a);
+  border-color: var(--cr-border-dark, #5a5a5a);
+  box-shadow: var(--cr-shadow-dark, 0 2px 8px rgba(0, 0, 0, 0.3));
 }
 """
 
@@ -310,15 +400,50 @@ def _safe_custom_css(css: str) -> str:
     return (css or "").replace("</", "<\\/")
 
 
+def _render_decomp_tile(
+    ch: str, entry: Optional[HanziEntry], *, is_component: bool
+) -> str:
+    cls = "char-relations-decomp-item"
+    if is_component:
+        cls += " is-component"
+    pinyin = entry.display_pinyin() if entry else ""
+    definition = (entry.definition if entry else "") or ""
+    aria = escape(definition or ch)
+    parts = [f'<span class="{cls}" tabindex="0" aria-label="{aria}">']
+    if pinyin:
+        parts.append(f'<span class="char-relations-pinyin">{escape(pinyin)}</span>')
+    parts.append(f'<span class="char-relations-decomp-hanzi">{escape(ch)}</span>')
+    if definition:
+        parts.append(
+            f'<span class="char-relations-decomp-gloss">{escape(definition)}</span>'
+        )
+    parts.append("</span>")
+    return "".join(parts)
+
+
+def _render_decomp_row(ch: str, head: Optional[HanziEntry]) -> str:
+    if not head or not head.components:
+        return ""
+    parts = ['<div class="char-relations-decomp">']
+    parts.append(_render_decomp_tile(ch, head, is_component=False))
+    parts.append('<span class="char-relations-decomp-arrow" aria-hidden="true">→</span>')
+    for comp in head.components:
+        parts.append(_render_decomp_tile(comp, get_hanzi_entry(comp), is_component=True))
+    parts.append("</div>")
+    return "".join(parts)
+
+
 def render_panel(
-    groups: list[tuple[str, list[RelatedEntry]]],
+    groups: list[tuple[str, list[RelatedEntry], Optional[HanziEntry]]],
     ui: Optional[dict[str, Any]] = None,
+    *,
+    show_components: bool = True,
 ) -> str:
     """
     Build the Related panel HTML, or "" if there is nothing to show.
 
-    *ui* comes from config["ui"] (Appearance tab). Defaults applied if omitted.
-    """
+    Each group is (character, related entries, optional bundled hanzi metadata).
+  """
     if not groups:
         return ""
 
@@ -332,39 +457,52 @@ def render_panel(
         f'<div class="char-relations" id="char-relations-panel" style="{_css_var_block(ui)}">',
     ]
 
-    for i, (ch, entries) in enumerate(groups):
+    for i, (ch, entries, hanzi) in enumerate(groups):
         parts.append('<div class="char-relations-group">')
-        if i == 0:
+        decomp_html = _render_decomp_row(ch, hanzi) if show_components else ""
+        has_decomp = bool(decomp_html)
+
+        if i == 0 and has_decomp:
+            parts.append('<div class="char-relations-top-row">')
+            parts.append(decomp_html)
+            parts.append('<div class="char-relations-title">Relatives</div>')
+            parts.append("</div>")
+        elif i == 0:
             parts.append('<div class="char-relations-heading">')
             parts.append(f'<div class="char-relations-char">{escape(ch)}</div>')
             parts.append('<div class="char-relations-title">Relatives</div>')
             parts.append("</div>")
-        else:
+        elif not has_decomp:
             parts.append(f'<div class="char-relations-char">{escape(ch)}</div>')
-        parts.append('<div class="char-relations-scroll">')
-        parts.append(
-            '<button type="button" class="char-relations-arrow char-relations-arrow-left" '
-            'aria-label="Scroll left"></button>'
-        )
-        parts.append('<div class="char-relations-items">')
-        for entry in entries:
-            word = escape(entry.word)
-            pinyin = escape(entry.pinyin) if entry.pinyin else ""
-            nid = int(entry.note_id)
+        elif has_decomp:
+            parts.append(decomp_html)
+
+        if entries:
+            parts.append('<div class="char-relations-scroll">')
             parts.append(
-                f'<span class="{_item_class(entry)}" data-nid="{nid}" '
-                f'role="button" title="Open in Browser" tabindex="0">'
+                '<button type="button" class="char-relations-arrow char-relations-arrow-left" '
+                'aria-label="Scroll left"></button>'
             )
-            if pinyin:
-                parts.append(f'<span class="char-relations-pinyin">{pinyin}</span>')
-            parts.append(f'<span class="char-relations-word">{word}</span>')
-            parts.append("</span>")
-        parts.append("</div>")
-        parts.append(
-            '<button type="button" class="char-relations-arrow char-relations-arrow-right" '
-            'aria-label="Scroll right"></button>'
-        )
-        parts.append("</div>")
+            parts.append('<div class="char-relations-items">')
+            for entry in entries:
+                word = escape(entry.word)
+                pinyin = escape(entry.pinyin) if entry.pinyin else ""
+                nid = int(entry.note_id)
+                parts.append(
+                    f'<span class="{_item_class(entry)}" data-nid="{nid}" '
+                    f'role="button" title="Open in Browser" tabindex="0">'
+                )
+                if pinyin:
+                    parts.append(f'<span class="char-relations-pinyin">{pinyin}</span>')
+                parts.append(f'<span class="char-relations-word">{word}</span>')
+                parts.append("</span>")
+            parts.append("</div>")
+            parts.append(
+                '<button type="button" class="char-relations-arrow char-relations-arrow-right" '
+                'aria-label="Scroll right"></button>'
+            )
+            parts.append("</div>")
+
         parts.append("</div>")
 
     parts.append("</div>")

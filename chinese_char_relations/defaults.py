@@ -35,6 +35,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "include_suspended": True,
     "candidate_min_length": 2,
     "show_only_on_back": True,
+    "show_components": True,
     "ui": deepcopy(DEFAULT_UI),
 }
 

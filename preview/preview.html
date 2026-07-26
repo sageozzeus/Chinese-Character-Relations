@@ -118,6 +118,23 @@
       flex: 0 0 auto;
       color: #1a3a6b;
     }
+    .char-relations-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75em;
+      margin-bottom: 0.45em;
+    }
+    .char-relations-top-row .char-relations-decomp {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .char-relations-top-row .char-relations-title {
+      text-align: right;
+      align-self: flex-start;
+      padding-top: 0.05em;
+    }
     .char-relations-group {
       box-sizing: border-box;
     }
@@ -241,6 +258,68 @@
     .char-relations-item.is-suspended .char-relations-pinyin {
       opacity: 0.85;
     }
+    .char-relations-decomp {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.55em 0.95em;
+      margin-bottom: 0.45em;
+      padding: 0.1em 0;
+    }
+    .char-relations-decomp-arrow {
+      align-self: flex-end;
+      opacity: 0.55;
+      font-size: 0.95em;
+      line-height: 1;
+      padding: 0 0.02em 0.12em;
+    }
+    .char-relations-decomp-item {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.08em;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      cursor: default;
+    }
+    .char-relations-decomp-item.is-component .char-relations-decomp-hanzi {
+      color: #1a3a6b;
+    }
+    .char-relations-decomp-hanzi {
+      font-size: 1.05em;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .char-relations-decomp-gloss {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 0.35em);
+      transform: translateX(-50%);
+      z-index: 5;
+      min-width: 8em;
+      max-width: 14em;
+      padding: 0.35em 0.45em;
+      font-size: 0.62em;
+      font-weight: 400;
+      line-height: 1.25;
+      text-align: center;
+      white-space: normal;
+      color: inherit;
+      background: #e4ecf6;
+      border: 1px solid rgba(120, 120, 120, 0.28);
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(40, 35, 30, 0.08);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+    }
+    .char-relations-decomp-item:hover .char-relations-decomp-gloss,
+    .char-relations-decomp-item:focus-within .char-relations-decomp-gloss {
+      opacity: 1;
+      visibility: visible;
+    }
 
     .nightMode .char-relations,
     .night-mode .char-relations {
@@ -283,6 +362,16 @@
     .night-mode .char-relations-item.is-suspended .char-relations-word {
       color: #ef9a9a;
     }
+    .nightMode .char-relations-decomp-item.is-component .char-relations-decomp-hanzi,
+    .night-mode .char-relations-decomp-item.is-component .char-relations-decomp-hanzi {
+      color: #b8dcff;
+    }
+    .nightMode .char-relations-decomp-gloss,
+    .night-mode .char-relations-decomp-gloss {
+      background: #2a303a;
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -307,9 +396,26 @@
         </div>
         <div class="char-relations">
           <div class="char-relations-group">
-            <div class="char-relations-heading">
-              <div class="char-relations-char">好</div>
-              <div class="char-relations-title">Relatives</div>
+            <div class="char-relations-top-row">
+            <div class="char-relations-decomp">
+              <span class="char-relations-decomp-item" tabindex="0">
+                <span class="char-relations-pinyin">hǎo</span>
+                <span class="char-relations-decomp-hanzi">好</span>
+                <span class="char-relations-decomp-gloss">good, excellent, fine</span>
+              </span>
+              <span class="char-relations-decomp-arrow" aria-hidden="true">→</span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">nǚ</span>
+                <span class="char-relations-decomp-hanzi">女</span>
+                <span class="char-relations-decomp-gloss">woman; female</span>
+              </span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">zǐ</span>
+                <span class="char-relations-decomp-hanzi">子</span>
+                <span class="char-relations-decomp-gloss">child; son</span>
+              </span>
+            </div>
+            <div class="char-relations-title">Relatives</div>
             </div>
             <div class="char-relations-scroll">
               <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
@@ -327,7 +433,22 @@
             </div>
           </div>
           <div class="char-relations-group">
-            <div class="char-relations-char">像</div>
+            <div class="char-relations-decomp">
+              <span class="char-relations-decomp-item" tabindex="0">
+                <span class="char-relations-pinyin">xiàng</span>
+                <span class="char-relations-decomp-hanzi">像</span>
+                <span class="char-relations-decomp-gloss">a picture, image, figure</span>
+              </span>
+              <span class="char-relations-decomp-arrow" aria-hidden="true">→</span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-decomp-hanzi">亻</span>
+              </span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">xiàng</span>
+                <span class="char-relations-decomp-hanzi">象</span>
+                <span class="char-relations-decomp-gloss">elephant; ivory</span>
+              </span>
+            </div>
             <div class="char-relations-scroll">
               <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">
@@ -354,9 +475,26 @@
         </div>
         <div class="char-relations">
           <div class="char-relations-group">
-            <div class="char-relations-heading">
-              <div class="char-relations-char">好</div>
-              <div class="char-relations-title">Relatives</div>
+            <div class="char-relations-top-row">
+            <div class="char-relations-decomp">
+              <span class="char-relations-decomp-item" tabindex="0">
+                <span class="char-relations-pinyin">hǎo</span>
+                <span class="char-relations-decomp-hanzi">好</span>
+                <span class="char-relations-decomp-gloss">good, excellent, fine</span>
+              </span>
+              <span class="char-relations-decomp-arrow" aria-hidden="true">→</span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">nǚ</span>
+                <span class="char-relations-decomp-hanzi">女</span>
+                <span class="char-relations-decomp-gloss">woman; female</span>
+              </span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">zǐ</span>
+                <span class="char-relations-decomp-hanzi">子</span>
+                <span class="char-relations-decomp-gloss">child; son</span>
+              </span>
+            </div>
+            <div class="char-relations-title">Relatives</div>
             </div>
             <div class="char-relations-scroll">
               <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
@@ -374,7 +512,22 @@
             </div>
           </div>
           <div class="char-relations-group">
-            <div class="char-relations-char">像</div>
+            <div class="char-relations-decomp">
+              <span class="char-relations-decomp-item" tabindex="0">
+                <span class="char-relations-pinyin">xiàng</span>
+                <span class="char-relations-decomp-hanzi">像</span>
+                <span class="char-relations-decomp-gloss">a picture, image, figure</span>
+              </span>
+              <span class="char-relations-decomp-arrow" aria-hidden="true">→</span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-decomp-hanzi">亻</span>
+              </span>
+              <span class="char-relations-decomp-item is-component" tabindex="0">
+                <span class="char-relations-pinyin">xiàng</span>
+                <span class="char-relations-decomp-hanzi">象</span>
+                <span class="char-relations-decomp-gloss">elephant; ivory</span>
+              </span>
+            </div>
             <div class="char-relations-scroll">
               <button type="button" class="char-relations-arrow char-relations-arrow-left" aria-label="Scroll left"></button>
               <div class="char-relations-items">

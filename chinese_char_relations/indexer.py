@@ -171,6 +171,44 @@ class CharIndex:
         self.last_stats = stats
         return stats
 
+    def related_for_char(
+        self,
+        ch: str,
+        word: str,
+        config: dict[str, Any],
+        *,
+        note_id: Optional[int] = None,
+    ) -> list[RelatedEntry]:
+        """Related deck words for a single character (filter/sort/cap unchanged)."""
+        if not ch or not self._index:
+            return []
+
+        include_suspended = bool(config.get("include_suspended", True))
+        max_per_char = int(config.get("max_per_char", 8) or 8)
+        min_len = int(config.get("candidate_min_length", 2) or 0)
+
+        current = strip_html(word)
+        current_cjk = "".join(extract_cjk_chars(current, unique=False))
+        candidates = self._index.get(ch) or []
+        filtered: list[RelatedEntry] = []
+        for entry in candidates:
+            if note_id is not None and entry.note_id == note_id:
+                continue
+            if entry.word == current:
+                continue
+            entry_cjk = "".join(extract_cjk_chars(entry.word, unique=False))
+            if entry_cjk and entry_cjk == current_cjk:
+                continue
+            if not include_suspended and entry.suspended:
+                continue
+            if min_len and cjk_length(entry.word) < min_len:
+                continue
+            filtered.append(entry)
+        filtered.sort(key=self._sort_key)
+        if len(filtered) > max_per_char:
+            filtered = filtered[:max_per_char]
+        return filtered
+
     def related_for(
         self,
         word: str,
@@ -182,41 +220,18 @@ class CharIndex:
         Return related entries grouped by character for *word*.
 
         Groups preserve character order in *word*. Current note / headword excluded.
+        Only characters with at least one relative are included (legacy helper).
         """
         if not word or not self._index:
             return []
 
-        include_suspended = bool(config.get("include_suspended", True))
-        max_per_char = int(config.get("max_per_char", 8) or 8)
-        min_len = int(config.get("candidate_min_length", 2) or 0)
-
-        current = strip_html(word)
-        current_cjk = "".join(extract_cjk_chars(current, unique=False))
-        chars = extract_cjk_chars(current)
+        chars = extract_cjk_chars(strip_html(word))
         if not chars:
             return []
 
         groups: list[tuple[str, list[RelatedEntry]]] = []
         for ch in chars:
-            candidates = self._index.get(ch) or []
-            filtered: list[RelatedEntry] = []
-            for entry in candidates:
-                if note_id is not None and entry.note_id == note_id:
-                    continue
-                if entry.word == current:
-                    continue
-                # Same CJK sequence (ignore punctuation / spacing drift)
-                entry_cjk = "".join(extract_cjk_chars(entry.word, unique=False))
-                if entry_cjk and entry_cjk == current_cjk:
-                    continue
-                if not include_suspended and entry.suspended:
-                    continue
-                if min_len and cjk_length(entry.word) < min_len:
-                    continue
-                filtered.append(entry)
-            filtered.sort(key=self._sort_key)
-            if len(filtered) > max_per_char:
-                filtered = filtered[:max_per_char]
+            filtered = self.related_for_char(ch, word, config, note_id=note_id)
             if filtered:
                 groups.append((ch, filtered))
         return groups

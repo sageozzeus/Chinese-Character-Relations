@@ -8,6 +8,7 @@
   "include_suspended": true,
   "candidate_min_length": 2,
   "show_only_on_back": true,
+  "show_components": true,
   "ui": {
     "max_width": "100%",
     "border_radius_px": 12,

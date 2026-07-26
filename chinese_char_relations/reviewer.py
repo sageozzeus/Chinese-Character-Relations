@@ -8,9 +8,10 @@ from typing import Any, Optional
 from anki.cards import Card
 from aqt import mw
 
-from .cjk import strip_html
+from .cjk import extract_cjk_chars, strip_html
 from .defaults import merge_config
-from .indexer import FALLBACK_WORD_FIELDS, get_index, resolve_field
+from .hanzi_data import HanziEntry, get as get_hanzi
+from .indexer import FALLBACK_WORD_FIELDS, RelatedEntry, get_index, resolve_field
 from .render import PANEL_JS, render_panel
 
 
@@ -49,12 +50,38 @@ def _word_from_note(note: Any, config: dict[str, Any]) -> tuple[Optional[str], O
     return word, nid
 
 
+def _build_panel_groups(
+    word: str,
+    config: dict[str, Any],
+    *,
+    note_id: Optional[int] = None,
+) -> list[tuple[str, list[RelatedEntry], Optional[HanziEntry]]]:
+    """One group per unique CJK char: relatives (optional) + bundled hanzi metadata."""
+    chars = extract_cjk_chars(word)
+    if not chars:
+        return []
+
+    show_components = bool(config.get("show_components", True))
+    idx = get_index()
+    has_index = bool(idx._index or idx.note_count)
+
+    groups: list[tuple[str, list[RelatedEntry], Optional[HanziEntry]]] = []
+    for ch in chars:
+        entries = (
+            idx.related_for_char(ch, word, config, note_id=note_id)
+            if has_index
+            else []
+        )
+        hanzi = get_hanzi(ch) if show_components else None
+        has_decomp = bool(hanzi and hanzi.components)
+        if not entries and not has_decomp:
+            continue
+        groups.append((ch, entries, hanzi if show_components else None))
+    return groups
+
+
 def panel_html_for_card(card: Card) -> str:
     """Build Related panel HTML for *card*, or "" if nothing to show."""
-    idx = get_index()
-    if not idx.note_count and not idx._index:
-        return ""
-
     config = _config()
     try:
         note = card.note()
@@ -65,8 +92,15 @@ def panel_html_for_card(card: Card) -> str:
     if not word:
         return ""
 
-    groups = idx.related_for(word, config, note_id=note_id)
-    return render_panel(groups, ui=config.get("ui"))
+    groups = _build_panel_groups(word, config, note_id=note_id)
+    if not groups:
+        return ""
+
+    return render_panel(
+        groups,
+        ui=config.get("ui"),
+        show_components=bool(config.get("show_components", True)),
+    )
 
 
 def on_card_will_show(html: str, card: Card, context: str) -> str:

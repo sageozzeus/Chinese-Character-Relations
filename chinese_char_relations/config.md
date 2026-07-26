@@ -16,7 +16,15 @@ Settings are edited in a **GUI dialog** (no JSON editing required):
 | Include suspended | yes | Show notes whose cards are all suspended |
 | Min word length | `2` | Minimum CJK length for related candidates |
 | Show only on back | yes | Off = show relatives on front and back during review |
+| Show character components | yes | Decomposition row (pinyin above each part; English on hover). Bundled data — **no rebuild** |
 | Rebuild Index | button | Scans decks and refreshes the character → notes index |
+
+### Components row (when enabled)
+
+- Shown **above** each character’s related words for every CJK character in the reviewed word.
+- Layout: head character → components, with pinyin on each; **Relatives** label on the first row only (top right).
+- Meanings appear **only on hover** over a character or component (desktop).
+- Turn off under **Show character components** if you only want deck relatives.
 
 After changing decks or fields, rebuild when prompted (or use **Rebuild Index** on this tab).
 

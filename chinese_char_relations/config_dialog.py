@@ -604,6 +604,7 @@ class ConfigDialog(QDialog):
         layout.addLayout(form)
 
         tip = QLabel(
+            "Character data from make-me-a-hanzi (MIT). "
             "After deck or field changes, rebuild the index on the General tab."
         )
         tip.setWordWrap(True)
@@ -770,6 +771,13 @@ class ConfigDialog(QDialog):
             "On: relatives only on the card back. Off: show on front and back."
         )
         _add_toggle_row(layout, "Show only on back", self.back_only_toggle)
+
+        self.show_components_toggle = ToggleSwitch()
+        self.show_components_toggle.setToolTip(
+            "Show character decomposition (components, pinyin, meanings on hover) "
+            "from bundled data. No index rebuild needed."
+        )
+        _add_toggle_row(layout, "Show character components", self.show_components_toggle)
         return box
 
     def _build_index_group(self) -> QGroupBox:
@@ -971,6 +979,8 @@ class ConfigDialog(QDialog):
             back_only = conf.get("show_on_answer_only", True)
         self.back_only_toggle.setChecked(bool(back_only))
 
+        self.show_components_toggle.setChecked(bool(conf.get("show_components", True)))
+
         ui = conf.get("ui") or deepcopy(DEFAULT_UI)
         self.max_width_edit.setText(str(ui.get("max_width", "100%")))
         self.radius_spin.setValue(int(ui.get("border_radius_px", 12)))
@@ -1050,6 +1060,7 @@ class ConfigDialog(QDialog):
             "include_suspended": self.include_suspended_toggle.isChecked(),
             "candidate_min_length": self.min_len_spin.value(),
             "show_only_on_back": self.back_only_toggle.isChecked(),
+            "show_components": self.show_components_toggle.isChecked(),
             "ui": self._collect_ui(),
         }
 

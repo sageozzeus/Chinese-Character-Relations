@@ -8,10 +8,10 @@ During review, when the **answer** is shown, the add-on:
 
 1. Reads the current note’s configured **word** field
 2. Extracts unique CJK characters (Unicode ideographs)
-3. Looks up other notes in an in-memory inverted index that contain those characters
-4. Injects a **Related** HTML panel under the card (does not edit notes or templates)
+3. For each character: optional **decomposition** from bundled `hanzi_data.json`; **related words** from an in-memory inverted index built from your decks
+4. Injects a **Relatives** HTML panel under the card (does not edit notes or templates)
 
-If there are no relations, nothing is injected (no empty box).
+If there are no relatives and no decomposition for any character in the word, nothing is injected.
 
 ```
 profile open / sync / Tools→Rebuild
@@ -42,6 +42,9 @@ hanzi-relatives/
 │   ├── config.md               # Short help text
 │   ├── config_dialog.py        # GUI settings (General / Appearance / About)
 │   ├── cjk.py                  # CJK extract / HTML strip
+│   ├── ids.py                  # IDS decomposition parsing (build + tests)
+│   ├── hanzi_data.py           # Load bundled hanzi_data.json
+│   ├── data/hanzi_data.json    # Shipped character metadata (regenerate via scripts/)
 │   ├── indexer.py              # Build + query inverted index
 │   ├── render.py               # HTML/CSS for Related panel
 │   └── reviewer.py             # Answer/question hooks + injection
@@ -88,6 +91,8 @@ Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `ch
 | How fields/decks are scanned | `indexer.py` → `CharIndex.build` |
 | Sort / filter / caps of relatives | `indexer.py` → `related_for`, `_sort_key` |
 | Panel markup / CSS | `render.py` → `PANEL_CSS`, `render_panel` + sync `preview/preview.html` |
+| Character decomposition data | `data/hanzi_data.json`; regen: `python3 scripts/build_hanzi_data.py` |
+| Bundled dict loader | `hanzi_data.py` |
 | When panel appears / clears | `reviewer.py` → `on_show_answer`, `on_show_question` |
 | Click related word → Browser | `browser.py` + `pycmd` in `render.py` PANEL_JS |
 | Settings GUI (decks, fields, Appearance, About) | `config_dialog.py` + `defaults.py` + `about_meta.py` |
@@ -130,6 +135,7 @@ User edits are stored in the add-on’s `meta.json` under the profile’s `addon
 | `include_suspended` | bool | Applied at **lookup** (no rebuild needed). |
 | `candidate_min_length` | int | Min CJK char count on candidate words. |
 | `show_only_on_back` | bool | On = answer only; off = front + back. Legacy `show_on_answer_only` still read. |
+| `show_components` | bool | Decomposition row from bundled data; no rebuild needed. |
 
 After changing `decks` or `fields`, users must **Rebuild Index**.
 
@@ -276,7 +282,7 @@ CJK helpers are covered by unittest (does not need Anki/`aqt`):
 
 ```bash
 cd /Users/urfan/Desktop/apps-websites/hanzi-relatives
-python3 -m unittest tests.test_cjk -v
+python3 -m unittest tests.test_cjk tests.test_hanzi_ids tests.test_hanzi_data -v
 ```
 
 `__init__.py` guards `aqt` imports so the package can be imported outside Anki for these tests. Indexer/reviewer still require a live Anki session (see [`TESTING.md`](TESTING.md)).

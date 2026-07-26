@@ -33,8 +33,19 @@ Run these after any change to indexing, rendering, or hooks. Use a small Chinese
 
 ### 3. No empty state noise
 
-- Review a word whose characters appear nowhere else
+- Review a word whose characters appear nowhere else **and** have no bundled decomposition
 - **Expect:** No Related box, no “0 related” message
+- Review a rare char with decomposition but no deck relatives (if you have one in data)
+- **Expect:** Components row only, no relatives scroller
+
+### 3b. Character components
+
+- Review **好** (or any char with known decomposition)
+- **Expect:** Row `好 → 女 子` with pinyin above each tile; hover shows English gloss
+- Review **好像** when only 好 has deck relatives
+- **Expect:** Two character groups; 像 shows components even if relatives list is empty
+- Turn off **Show character components** in General → Save → flip card
+- **Expect:** Relatives UI unchanged from 0.1.0 (no decomposition row)
 
 ### 4. Front stays clean
 

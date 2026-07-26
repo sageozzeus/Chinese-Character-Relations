@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import List, Tuple
 
 ADDON_NAME = "Chinese Character Relations"
-ADDON_VERSION = "0.1.0"
+ADDON_VERSION = "0.2.0"
 MIN_ANKI = "23.10+"
 AUTHOR = "Ozzeus"
 LICENSE = "MIT"
@@ -24,6 +24,16 @@ URL_ANKIWEB = ""
 
 # Newest first. Keep the latest entry to ~5 bullets for the About dialog.
 CHANGELOG: List[Tuple[str, List[str]]] = [
+    (
+        "0.2.0",
+        [
+            "Character decomposition row per hanzi (components + pinyin)",
+            "English meanings on hover for the character and each component",
+            "Shows all characters in a word even when only some have deck relatives",
+            "Toggle components in General → Display options",
+            "Bundled make-me-a-hanzi data (offline, ~900 KB)",
+        ],
+    ),
     (
         "0.1.0",
         [
