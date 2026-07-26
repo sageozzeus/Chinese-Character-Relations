@@ -240,18 +240,30 @@ unzip -l "$OUT"   # sanity-check: __init__.py at archive root
 
 ### GitHub Release
 
+**Required after every version push to `main`.** Users install from the Release asset, not from source.
+
 1. Bump `ADDON_VERSION` + changelog in `about_meta.py` when shipping a new version.
-2. Build the `.ankiaddon` as above.
-3. Commit/push README/docs if install links need the new filename.
-4. Create a release and attach the asset (download counts only apply to uploaded assets, not Source code zips):
+2. Commit, push to `main`.
+3. From repo root (after `gh auth login` once):
 
    ```bash
-   gh release create "v${VERSION}" "$OUT" \
-     --title "v${VERSION}" \
-     --notes "Chinese Character Relations ${VERSION}."
+   ./scripts/release-github.sh
    ```
 
-5. Point the README install link at `/releases/latest` (already does).
+   This builds `chinese_char_relations-${VERSION}.ankiaddon`, creates tag `v${VERSION}` if missing, uploads the asset, and sets release notes from the changelog.
+
+Manual equivalent:
+
+```bash
+VERSION=$(python3 -c "from chinese_char_relations.about_meta import ADDON_VERSION; print(ADDON_VERSION)")
+OUT="chinese_char_relations-${VERSION}.ankiaddon"
+# build zip (see Packaging section above)
+gh release create "v${VERSION}" "$OUT" --title "v${VERSION}" --notes-file -
+```
+
+If the release already exists: `gh release upload "v${VERSION}" "$OUT" --clobber`
+
+4. README install link uses `/releases/latest` (no edit needed per version).
 
 ### Publishing to AnkiWeb
 
