@@ -364,9 +364,9 @@ def get_index() -> CharIndex:
 
 
 def _format_stats(stats: BuildStats) -> str:
-    return (
-        f"Character Relations: indexed {stats.indexed} notes, {stats.chars} chars"
-    )
+    from .about_meta import ADDON_NAME
+
+    return f"{ADDON_NAME}: indexed {stats.indexed} notes, {stats.chars} chars"
 
 
 def _explain_zero(stats: BuildStats, config: dict[str, Any]) -> None:
@@ -394,7 +394,7 @@ def _explain_zero(stats: BuildStats, config: dict[str, Any]) -> None:
     lines.extend(
         [
             "",
-            "Fix: Tools → Character Relations…",
+            "Fix: Tools → Chinese Character Relations…",
             "Set Word / Hanzi to the field that holds Chinese text,",
             "then Rebuild Index on the General tab.",
         ]

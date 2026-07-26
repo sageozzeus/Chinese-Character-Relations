@@ -76,7 +76,7 @@ Anki loads Python at startup. There is **no hot reload**.
 ## UI preview (no Anki)
 
 - **Card panel:** [`preview/preview.html`](../preview/preview.html) — answer-side Relatives UI (**Cmd+O** in Finder, or open via a local server)
-- **Settings dialog:** [`preview/config-preview.html`](../preview/config-preview.html) — mock of **Tools → Character Relations…** (tabs: General / Appearance / About)
+- **Settings dialog:** [`preview/config-preview.html`](../preview/config-preview.html) — mock of **Tools → Chinese Character Relations…** (tabs: General / Appearance / About)
 
 Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `chinese_char_relations/render.py` (`PANEL_CSS`). Tweak settings layout/copy in `config-preview.html`, then mirror in `config_dialog.py`.
 
@@ -100,7 +100,7 @@ Edit `.char-relations*` CSS in `preview.html`, then copy the same rules into `ch
 
 Users never edit JSON. The dialog is opened from:
 
-- **Tools → Character Relations…** (opens settings GUI)
+- **Tools → Chinese Character Relations…** (opens settings GUI)
 - **Tools → Add-ons → Config** (via `mw.addonManager.setConfigAction`)
 
 Tabs: **General**, **Appearance**, **About** (read-only metadata from `about_meta.py`).

@@ -1,5 +1,15 @@
 # Bug solutions — Chinese Character Relations
 
+## About tab Name shows “Chinese Character” (truncated)
+
+**Symptom:** About → Name reads `Chinese Character` instead of `Chinese Character Relations`. Tools menu also showed the short label `Character Relations…`.
+
+**Cause:** `ADDON_NAME` was already correct. The About value `QLabel` used `setWordWrap(True)` inside a scroll area whose content has horizontal `Ignored` size policy, so the name wrapped and the second line (`Relations`) was clipped. The Tools menu used a hard-coded short title.
+
+**Fix:** `_meta_row` keeps meta values on one line (`setWordWrap(False)`), expanding size policy, tooltip with full text. Dialog min width 520 / resize 560. Menu, window title, and rebuild tooltip read `about_meta.ADDON_NAME`.
+
+---
+
 ## Indexed 0 notes, 0 chars
 
 **Symptom:** Rebuild Index tooltip shows `indexed 0 notes, 0 chars`.
@@ -16,7 +26,7 @@
 - Case-insensitive field match + fallbacks (`Hanzi`, `Expression`, …).
 - When index stays empty, show a dialog with scan/skip counts and which note types lack the field.
 
-**User action:** Tools → Character Relations… → set **Word / Hanzi** to the field that actually contains Chinese → **Rebuild Index** on the General tab.
+**User action:** Tools → Chinese Character Relations… → set **Word / Hanzi** to the field that actually contains Chinese → **Rebuild Index** on the General tab.
 
 ---
 

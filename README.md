@@ -45,7 +45,7 @@ Works offline. Uses only your collection — no external dictionary, no AnkiConn
 2. Download the **`.ankiaddon`** asset (e.g. `chinese_char_relations-0.1.0.ankiaddon`), not Source code.
 3. Double-click the file, or open it with Anki / drag it onto the Anki window.
 4. Restart Anki when prompted.
-5. Open **Tools → Character Relations…**
+5. Open **Tools → Chinese Character Relations…**
 6. On the **General** tab, set your Word / Hanzi (and optional Pinyin) fields, then click **Rebuild Index**.
 
 ### From AnkiWeb
@@ -62,7 +62,7 @@ Copy the `chinese_char_relations` folder into your Anki add-ons folder, then res
 
 ## Settings
 
-**Tools → Character Relations…** (or **Tools → Add-ons → Config**):
+**Tools → Chinese Character Relations…** (or **Tools → Add-ons → Config**):
 
 | Tab | What it’s for |
 | --- | --- |

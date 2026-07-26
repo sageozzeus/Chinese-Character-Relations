@@ -2,7 +2,7 @@
 
 Settings are edited in a **GUI dialog** (no JSON editing required):
 
-- **Tools → Character Relations…**
+- **Tools → Chinese Character Relations…**
 - or **Tools → Add-ons → Chinese Character Relations → Config**
 
 ## General tab
