@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import List, Tuple
 
 ADDON_NAME = "Chinese Character Relations"
-ADDON_VERSION = "0.2.0"
+ADDON_VERSION = "0.2.1"
 MIN_ANKI = "23.10+"
 AUTHOR = "Ozzeus"
 LICENSE = "MIT"
@@ -19,11 +19,16 @@ LICENSE = "MIT"
 URL_GITHUB = "https://github.com/sageozzeus/Chinese-Character-Relations"
 URL_ISSUES = URL_GITHUB + "/issues"
 URL_X = "https://x.com/sageozzeus"
-# Set after AnkiWeb publish, e.g. "https://ankiweb.net/shared/info/<id>"
-URL_ANKIWEB = ""
+URL_ANKIWEB = "https://ankiweb.net/shared/info/1076075855"
 
 # Newest first. Keep the latest entry to ~5 bullets for the About dialog.
 CHANGELOG: List[Tuple[str, List[str]]] = [
+    (
+        "0.2.1",
+        [
+            "AnkiWeb listing link and Rate button on the About tab",
+        ],
+    ),
     (
         "0.2.0",
         [

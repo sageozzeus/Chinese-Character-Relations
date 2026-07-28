@@ -618,7 +618,7 @@ class ConfigDialog(QDialog):
         ankiweb = (about_meta.URL_ANKIWEB or "").strip()
         if ankiweb:
             links.addWidget(_link_button("AnkiWeb page", ankiweb))
-            links.addWidget(_link_button("Rate / review", ankiweb))
+            links.addWidget(_link_button("Rate", ankiweb))
         else:
             soon = QLabel("AnkiWeb listing coming soon")
             soon.setAlignment(Qt.AlignmentFlag.AlignLeft)

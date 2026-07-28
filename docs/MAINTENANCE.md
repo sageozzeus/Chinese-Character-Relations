@@ -267,11 +267,12 @@ If the release already exists: `gh release upload "v${VERSION}" "$OUT" --clobber
 
 ### Publishing to AnkiWeb
 
+**Live listing:** [Chinese Character Relations](https://ankiweb.net/shared/info/1076075855) · Get Add-ons code **`1076075855`**
+
 1. Build the same `.ankiaddon` as above.
-2. Upload at https://ankiweb.net/shared/addons/
-3. AnkiWeb assigns a numeric folder id on install; `manifest.json` `package` matters mainly for offline `.ankiaddon` installs
-4. After the listing exists, set `URL_ANKIWEB` in `about_meta.py` to  
-   `https://ankiweb.net/shared/info/<id>` so the About tab shows **AnkiWeb page** and **Rate / review**. Mirror that in `preview/config-preview.html`.
+2. Upload at https://ankiweb.net/shared/addons/ (or update an existing branch).
+3. AnkiWeb installs into a **numeric** folder under `addons21/`; `manifest.json` `package` matters mainly for offline `.ankiaddon` installs.
+4. `URL_ANKIWEB` in `about_meta.py` points at the listing so the About tab shows **AnkiWeb page** and **Rate**. Mirror links in `preview/config-preview.html`.
 
 Update the AnkiWeb description when behavior changes. Match the AnkiWeb listing version string to `ADDON_VERSION`.
 

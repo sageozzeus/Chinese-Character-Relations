@@ -43,6 +43,6 @@ Customize Related panel look. Applies on the next answer flip (no rebuild).
 
 ## About tab
 
-Read-only. Version, license, changelog, and links (GitHub Issues for bugs, GitHub repo, X). AnkiWeb / Rate links appear after `URL_ANKIWEB` is set in `about_meta.py`.
+Read-only. Version, license, changelog, and links (GitHub Issues for bugs, GitHub repo, X, AnkiWeb page, Rate).
 
 `config.json` supplies defaults for first install. User values live in `meta.json`.

@@ -51,18 +51,21 @@ Example from the screenshots: **奶茶** shows 奶 → 女 乃 and 茶 → 艹 �
 
 ## Install
 
-### From GitHub (recommended until AnkiWeb is live)
+### From AnkiWeb (recommended)
+
+1. In Anki: **Tools → Add-ons → Get Add-ons…**
+2. Enter add-on code **`1076075855`** → OK, then restart when prompted.
+3. Or open the [AnkiWeb listing](https://ankiweb.net/shared/info/1076075855) and download from there.
+4. Open **Tools → Chinese Character Relations…** → **General** → set fields → **Rebuild Index**.
+
+### From GitHub
 
 1. Open the latest [Release](https://github.com/sageozzeus/Chinese-Character-Relations/releases/latest).
-2. Download the **`.ankiaddon`** asset (e.g. `chinese_char_relations-0.2.0.ankiaddon`), not Source code.
+2. Download the **`.ankiaddon`** asset (e.g. `chinese_char_relations-0.2.1.ankiaddon`), not Source code.
 3. Double-click the file, or open it with Anki / drag it onto the Anki window.
 4. Restart Anki when prompted.
 5. Open **Tools → Chinese Character Relations…**
 6. On the **General** tab, set your Word / Hanzi (and optional Pinyin) fields, then click **Rebuild Index**.
-
-### From AnkiWeb
-
-When the listing is live: **Tools → Add-ons → Get Add-ons…**, search for *Chinese Character Relations*, or open the listing from the About tab after install.
 
 ### Manual (developers)
 
@@ -108,6 +111,7 @@ Defaults assume `Word` and `Pinyin`. If your deck uses `Hanzi`, `Expression`, et
 
 ## Support
 
+- **AnkiWeb:** [listing](https://ankiweb.net/shared/info/1076075855) · Get Add-ons code **`1076075855`**
 - **Bugs:** [GitHub Issues](https://github.com/sageozzeus/Chinese-Character-Relations/issues)
 - **Updates / short questions:** [X @sageozzeus](https://x.com/sageozzeus)
 - **Source:** [github.com/sageozzeus/Chinese-Character-Relations](https://github.com/sageozzeus/Chinese-Character-Relations)
